@@ -1,0 +1,94 @@
+Lab run — first execution of the Communicator against real hardware
+Date: 2026-09-19
+Target: 192.168.1.99  (ML540M, firmware 00.00.16)
+Roadmap item: N1
+net-snmp: 5.9.4.pre2 on Ubuntu 24.04, Python 3.12.3
+
+RESULT: FAILED on first contact, with a defect in this adaptor -- not in the
+device, the MIBs or the OIDs. Exactly what N1 existed to find.
+
+------------------------------------------------------------
+Command
+  actelis-mediation --config etc/devices.yaml -v poll-once --device lab-switch-01
+
+Output
+  WARNING ... WALK 192.168.1.99 1.3.6.1.4.1.5468.100.1.2.2.1.1.3 failed
+              (SnmpError); retry 1/2 in 0.5s
+  WARNING ... WALK ... failed (SnmpError); retry 2/2 in 1.2s
+  polling lab-switch-01 (switch @ 192.168.1.99) ...
+    FAILED: SnmpError: snmpbulkwalk -v2c -c <redacted> -r 0 -t 3.0 -On -Cr 25
+            192.168.1.99:161 1.3.6.1.4.1.5468.100.1.2.2.1.1.3 failed (1):
+            USAGE: snmpbulkwalk [OPTIONS] AGENT [OID]
+
+  real 0m2.104s   (reproduced identically on a second run)
+
+------------------------------------------------------------
+ROOT CAUSE
+
+net-snmp takes its -C sub-options CONCATENATED with their value:
+
+    -Cr25          correct
+    -Cr 25         wrong
+
+The backend emitted them as two argv tokens. net-snmp then read "25" as a
+positional argument -- the AGENT address -- which shifted 192.168.1.99:161
+into the OID slot and left a third positional with nowhere to go, so the
+whole invocation died with a usage banner before a single packet was sent.
+
+WHY THE TEST SUITE MISSED IT
+
+FakeBackend answers at the Python level and never constructs a command line,
+so the argv was completely untested. That is a gap in the test strategy, not
+merely a typo: every assertion about walking was about what happened to the
+RESULT of a walk, none about the call itself.
+
+------------------------------------------------------------
+FIXES APPLIED
+
+1. -Cr is emitted as a single token (f"-Cr{n}"), and the construction moved
+   into NetSnmpBackend.walk_args() so it can be asserted without invoking
+   net-snmp. New file tests/test_snmp_argv.py, 7 tests, including an exact
+   expected argv and a check that AGENT and OID remain the last two tokens.
+
+2. A USAGE banner is now SnmpInvocationError -- classified as a bug in this
+   code rather than a device fault, and NEVER retried. The original run
+   burned two backoffs (1.7s) retrying a deterministic failure, which buried
+   the real cause behind warnings about the device.
+
+3. Sections are now isolated in poll_device(). A failure in the alarm walk
+   previously aborted the whole cycle, so the PM section never ran and we
+   learned nothing about it. Each section now records a capability gap and
+   the poll continues; per-section errors are returned and printed by the CLI.
+
+4. A failed alarm walk no longer reconciles against an empty list. This was
+   latent and more dangerous than the original bug: a full poll is treated as
+   authoritative, so anything absent is cleared -- but an ERRORED walk is not
+   evidence of absence, and reconciling it would have spuriously cleared
+   every standing alarm on the device. Two regression tests added.
+
+5. use_bulkwalk is now a per-device config option, so GETBULK behaviour can
+   be A/B'd against a specific agent without editing code.
+
+------------------------------------------------------------
+WHAT WAS AND WAS NOT ESTABLISHED
+
+Established:
+  - Credential redaction works in the field: the failing command line was
+    logged as "-c <redacted>" (finding F-22).
+  - Backoff and retry work, though they were applied to the wrong class of
+    error.
+  - Identity polling uses snmpget, not walk, so it ran before the failure --
+    check identity_samples in the database to confirm.
+
+NOT established -- N1 remains open until re-run:
+  - walk duration against a real agent (the run died in 2s)
+  - whether this agent handles GETBULK correctly
+  - whether currentAlarmTable holds link-down rows (all 30 interfaces are
+    down, so it plausibly does -- this would be the first real exercise of
+    the alarm decode path)
+  - whether the Y.1731 PM tables are populated on this firmware
+
+RE-RUN
+  actelis-mediation --config etc/devices.yaml -v poll-once --device lab-switch-01
+  actelis-mediation --config etc/devices.yaml alarms --device lab-switch-01
+  # then again, to confirm the second poll emits zero new transitions

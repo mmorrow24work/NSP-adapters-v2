@@ -7,7 +7,7 @@ per device type, managed by **direct SNMP** to each device.
 This is a reworked version of
 [`mmorrow24work/NSP-adapters`](https://github.com/mmorrow24work/NSP-adapters)
 following an independent review. **Start with [`REVIEW-FINDINGS.md`](REVIEW-FINDINGS.md)**
-— 22 findings, severity-rated, each with what was done about it.
+— 26 findings, severity-rated, each with what was done about it.
 [`ROADMAP.md`](ROADMAP.md) has the revised plan, and
 [`docs/glossary.md`](docs/glossary.md) explains every abbreviation used
 across the repo — ADR, MDM, FCAPS, VTSS, MEP, FLR and the rest.
@@ -208,7 +208,7 @@ src/actelis_mediation/
   rowedit/             VTSSRowEditorState protocol + 63 generated specs
   traps/               snmptrapd decoding
   store/               SQLite persistence
-tests/                 47 unit / conformance / regression tests
+tests/                 56 unit / conformance / regression tests
   fcaps/               63 FCAPS acceptance tests, one module per pillar
 ```
 
@@ -216,7 +216,7 @@ tests/                 47 unit / conformance / regression tests
 
 ```bash
 pip install -e ".[dev]"
-make test          # 110 tests, incl. conformance against the vendor MIBs
+make test          # 119 tests, incl. conformance against the vendor MIBs
 make fcaps         # the FCAPS acceptance suite, offline
 make verify        # every OID constant vs the MIBs
 make lint

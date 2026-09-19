@@ -48,7 +48,8 @@ from dataclasses import dataclass
 
 from .backend import SnmpTarget, VarBind
 from .errors import (SnmpAuthorization, SnmpBadValue, SnmpError,
-                     SnmpNoSuchObject, SnmpTimeout, SnmpToolMissing)
+                     SnmpInvocationError, SnmpNoSuchObject, SnmpTimeout,
+                     SnmpToolMissing)
 from .oid import normalize
 from .redact import redact_args, redact_text
 
@@ -59,6 +60,9 @@ _TIMEOUT_RE = re.compile(r"Timeout: No Response|No Response from", re.IGNORECASE
 _AUTH_RE = re.compile(r"authorizationError|noAccess|Authentication failure", re.IGNORECASE)
 _BADVAL_RE = re.compile(r"wrongType|badValue|wrongLength|wrongValue|inconsistentValue|notWritable",
                         re.IGNORECASE)
+# A USAGE banner means we built the command line wrong. It is deterministic,
+# so retrying is pure waste -- and it masks the real cause behind N retries.
+_USAGE_RE = re.compile(r"^USAGE:", re.MULTILINE)
 # "<oid> = <TYPE>: <value>"  or  "<oid> = <value>"
 _VARBIND_RE = re.compile(r"^(?P<oid>[.\d]+)\s*=\s*(?:(?P<type>[A-Za-z0-9 ]+):\s*)?(?P<value>.*)$")
 
@@ -126,6 +130,10 @@ class NetSnmpBackend:
             raise SnmpAuthorization(f"agent refused the request: {safe_out[:300]}")
         if _BADVAL_RE.search(output):
             raise SnmpBadValue(safe_out[:400])
+        if _USAGE_RE.search(output):
+            raise SnmpInvocationError(
+                f"net-snmp rejected the command line built by this adaptor: "
+                f"{safe_cmd}\n{safe_out.splitlines()[0] if safe_out else ''}")
         if proc.returncode != 0 and not proc.stdout.strip():
             raise SnmpError(f"{safe_cmd} failed ({proc.returncode}): {safe_out[:300]}")
         return proc.stdout
@@ -141,7 +149,8 @@ class NetSnmpBackend:
         while True:
             try:
                 return fn()
-            except (SnmpNoSuchObject, SnmpAuthorization, SnmpBadValue, SnmpToolMissing):
+            except (SnmpNoSuchObject, SnmpAuthorization, SnmpBadValue,
+                    SnmpToolMissing, SnmpInvocationError):
                 raise
             except (SnmpTimeout, SnmpError) as exc:
                 if attempt >= retries:
@@ -208,13 +217,31 @@ class NetSnmpBackend:
 
         return self._retrying(once, retries=target.retries, what=f"GET {target.host}")
 
+    @staticmethod
+    def walk_args(target: SnmpTarget, base_oid: str, auth: list[str]) -> list[str]:
+        """Build the walk command line.
+
+        Split out so it can be unit-tested without invoking net-snmp. The
+        first live run against hardware failed here and nowhere else: net-snmp
+        takes the -C sub-options CONCATENATED with their value ("-Cr25"), not
+        as two argv tokens ("-Cr", "25"). Passing them separately makes the
+        number look like a positional argument, net-snmp reads it as the agent
+        address, and the whole invocation dies with a USAGE banner.
+
+        Nothing in the mocked test suite could catch that, because FakeBackend
+        never builds a command line. Hence tests/test_snmp_argv.py.
+        """
+        use_bulk = target.use_bulkwalk and shutil.which("snmpbulkwalk") is not None
+        tool = "snmpbulkwalk" if use_bulk else "snmpwalk"
+        args = [tool, "-v2c", *auth, "-r", "0", "-t", str(target.timeout_s), "-On"]
+        if use_bulk:
+            args.append(f"-Cr{int(target.max_repetitions)}")
+        args += [f"{target.host}:{target.port}", base_oid]
+        return args
+
     def walk(self, target: SnmpTarget, base_oid: str) -> dict[str, VarBind]:
         auth, env = self._auth(target.ro_community)
-        tool = "snmpbulkwalk" if shutil.which("snmpbulkwalk") else "snmpwalk"
-        args = [tool, "-v2c", *auth, "-r", "0", "-t", str(target.timeout_s), "-On"]
-        if tool == "snmpbulkwalk":
-            args += ["-Cr", str(target.max_repetitions)]
-        args += [f"{target.host}:{target.port}", base_oid]
+        args = self.walk_args(target, base_oid, auth)
 
         def once() -> dict[str, VarBind]:
             out = self._run(args, timeout_s=target.walk_timeout_s, env=env,

@@ -1,7 +1,7 @@
 """Poller behaviour, using a fake device image -- no network, no net-snmp."""
 from actelis_mediation.model.alarms import Severity
-from actelis_mediation.poll import (observe_alarms_switch, poll_identity,
-                                    poll_pm_dsl, poll_pm_switch)
+from actelis_mediation.poll import (observe_alarms_switch, poll_device,
+                                    poll_identity, poll_pm_dsl, poll_pm_switch)
 from actelis_mediation.poll import oids as O
 from actelis_mediation.poll.mapping import (AlarmMapping, AlarmMappingRow,
                                             PmMapping, PmMappingRow)
@@ -119,3 +119,62 @@ def test_unverified_loss_rate_scale_is_not_applied():
     assert r["unit_verified"] is False and "UNVERIFIED" in r["unit"]
     c = samples["ml540mPerfMonitorStatusStatisticsLmNearEndLossCount"]
     assert c["value"] == 12.0 and c["unit_verified"] is True
+
+
+# ---------------------------------------------------------------------------
+# Section isolation -- added after the first live run, where one malformed
+# walk aborted the whole cycle including sections that would have succeeded.
+# ---------------------------------------------------------------------------
+
+def test_one_failing_section_does_not_abort_the_others(tmp_path):
+    """Identity must still be collected when the alarm walk fails."""
+    from actelis_mediation.snmp.errors import SnmpError
+    from actelis_mediation.store import Store
+
+    class _AlarmsExplode(FakeBackend):
+        def walk(self, target, base_oid):
+            if base_oid.startswith(O.SWITCH_CURRENT_ALARM_ENTRY):
+                raise SnmpError("net-snmp rejected the command line")
+            return super().walk(target, base_oid)
+
+    be = _AlarmsExplode(values={
+        O.SWITCH_IDENTITY["productModel"].lstrip("."): "ML540M",
+        O.SWITCH_IDENTITY["swVersion"].lstrip("."): "00.00.16",
+        O.SWITCH_IDENTITY["portCount"].lstrip("."): "10",
+    })
+    with Store(tmp_path / "t.db") as store:
+        result = poll_device("sw", be, TARGET, "switch", store,
+                             alarm_mapping(), pm_mapping())
+        assert result["identity"] == 3, "identity must survive an alarm failure"
+        assert [s for s, _d in result["errors"]] == ["alarm-table"]
+        assert any(g["oid"] == "alarm-table" for g in store.capability_gaps("sw"))
+
+
+def test_a_failed_alarm_walk_does_not_clear_standing_alarms(tmp_path):
+    """The dangerous version of the same bug.
+
+    A full poll is authoritative -- anything absent is treated as cleared. But
+    a walk that ERRORED is not evidence of absence, and reconciling against an
+    empty list would spuriously clear every standing alarm on the device.
+    """
+    from actelis_mediation.snmp.errors import SnmpError
+    from actelis_mediation.store import Store
+
+    e = O.SWITCH_CURRENT_ALARM_ENTRY
+    healthy = FakeBackend(values={
+        f"{e}.3.1": "alarmGEPort7LinkDown(107)", f"{e}.4.1": "alm-major(2)",
+        f"{e}.5.1": "alm-Set(1)", f"{e}.2.1": "41"})
+
+    class _Broken(FakeBackend):
+        def walk(self, target, base_oid):
+            raise SnmpError("transport failure")
+
+    with Store(tmp_path / "t.db") as store:
+        poll_device("sw", healthy, TARGET, "switch", store,
+                    alarm_mapping(), pm_mapping(), what=("alarms",))
+        assert len(store.standing_alarms("sw")) == 1
+
+        poll_device("sw", _Broken(), TARGET, "switch", store,
+                    alarm_mapping(), pm_mapping(), what=("alarms",))
+        assert len(store.standing_alarms("sw")) == 1, (
+            "a failed walk must not be mistaken for 'the alarm went away'")

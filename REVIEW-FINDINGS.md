@@ -1,8 +1,9 @@
 # Independent Review — NSP-adapters
 
 **Reviewed:** `github.com/mmorrow24work/NSP-adapters` @ `1d71e57` (2026-09-19)
-**Findings:** 22 — 20 from the review pass, 2 more surfaced by writing the
-FCAPS acceptance suite (F-21, F-22)
+**Findings:** 26 — 20 from the review pass, 2 from writing the FCAPS
+acceptance suite (F-21, F-22), 4 from the first run against real hardware
+(F-23 … F-26)
 **Method:** every claim checked against primary sources — the vendor MIB
 archives parsed with an independently-written SMIv2 extractor
 (`tools/mibscan.py`, deliberately not `smidump`), the raw lab captures in
@@ -235,19 +236,50 @@ interface-counter PM source, zero rows in the PM mapping), `LLDP-MIB` (180),
 **Addressed** in `docs/mib-analysis/coverage-gaps.md`, with the full
 per-module inventory and a prioritisation.
 
-### F-07 · The LLDP "firmware gap" conclusion is premature
-The lab run walked the **proprietary** `ml540mLldpStatusNeighborsInformationTable`
+### F-07 · The LLDP "firmware gap" conclusion was wrong — RESOLVED 2026-09-19
+The 2026-09-18 lab run walked the **proprietary**
+`ml540mLldpStatusNeighborsInformationTable`
 (`1.3.6.1.4.1.5468.100.34.1.3.2`), got `No Such Object`, and concluded LLDP
-topology discovery cannot be assumed. The standard **`LLDP-MIB`
-(`1.0.8802.1.1.2`)** was never tried — and it ships in the vendor's own ML600
-archive, so Actelis clearly distributes it for this estate.
+topology discovery "cannot be assumed for the switch adaptor". The standard
+**`LLDP-MIB` (`1.0.8802.1.1.2`)** was never tried — despite shipping in the
+vendor's own ML600 archive.
 
-Many VTSS/Microsemi-derived agents implement the standard LLDP MIB whether or
-not the vendor branch is populated. This is a five-minute `snmpwalk` that
-could retire a flagged topology risk.
+**Tested on 2026-09-19** (`docs/lab-results/ml540m-lldp-20260919.txt`). The
+standard MIB *is* implemented on firmware `00.00.16`:
 
-**Addressed:** added as the first item in `docs/testing-strategy.md`'s lab
-checklist, with the exact command.
+| Object | Value |
+|---|---|
+| `lldpPortConfigAdminStatus` (ports 1-10) | `3` = txAndRx — LLDP actively running |
+| `lldpLocChassisId` | `00-03-85-92-04-10` (OUI `00:03:85` = Actelis) |
+| `lldpLocSysName` | `XMJ1-XMJ2-M540-02-010` |
+| `lldpLocSysDesc` | `00.00.16 2024-08-05T18:39:39+08:00` |
+
+So only the **proprietary** status subtree is missing — that half of the
+original finding stands. The standard path works.
+
+The neighbour table itself is still untested, for a reason the original run
+also missed: **all 30 interfaces are `ifOperStatus = down(2)`**. With no link
+up there is no neighbour to learn, so an empty `lldpRemTable` is the correct
+result rather than a defect. Bringing up one link to an LLDP speaker and
+re-walking `1.0.8802.1.1.2.1.4.1` closes it.
+
+**Consequence:** topology discovery is *not* a flagged risk for the switch —
+it just has to go through the standard MIB rather than the vendor branch.
+That materially reduces the pressure on the EMS `topologyTable` as the only
+identified topology source (ADR-0001).
+
+**Two side findings from the same walk**, both of which close gaps recorded
+elsewhere in this review:
+
+* **Standard `IF-MIB` is implemented on the switch** — `ifOperStatus`
+  responded for 30 entries against `portCount = 10` (physical ports plus
+  VLAN/aggregate/internal interfaces). `IF-MIB` was listed in F-06 as an
+  uncovered module with no rows in the PM mapping; it is now confirmed
+  available as an interface-counter PM source.
+* **`lldpLocSysName` and `lldpLocChassisId` are better inventory keys than
+  `productModel`** — a real deployed device name and the chassis MAC, both
+  over a standard MIB. `lldpLocSysDesc` carries firmware version and build
+  date, which is a cheap per-device drift signal (W1).
 
 ### F-08 · Two Actelis vendor questions are answered inside the repo's own archive
 `actelis-vendor-questions.md` Q1-Q4 ask which product lines ML540/ML622/ML684
@@ -440,6 +472,51 @@ which drives the real `_run` path rather than a stub.
 
 ---
 
+## Found on first contact with hardware (N1, 2026-09-19)
+
+The first execution of the Communicator against the lab ML540M failed in two
+seconds with a defect in this adaptor — not in the device, the MIBs or the
+OIDs. Capture: `docs/lab-results/ml540m-poll-once-20260919.txt`.
+
+### F-23 · C1 · `-Cr 25` emitted as two argv tokens, so every walk failed
+net-snmp takes its `-C` sub-options **concatenated** with their value:
+`-Cr25`, not `-Cr 25`. The backend emitted two tokens, so net-snmp read `25`
+as the agent address, shifted `192.168.1.99:161` into the OID slot, and
+aborted with a usage banner before sending a packet.
+
+**Why nothing caught it:** `FakeBackend` answers at the Python level and never
+builds a command line. Every assertion about walking concerned the *result*
+of a walk; none concerned the call. That is a gap in the test strategy, not a
+typo.
+
+**Fixed.** Construction moved to `NetSnmpBackend.walk_args()` so it is
+testable without invoking net-snmp; `tests/test_snmp_argv.py` asserts the
+exact expected argv, that `-Cr` never appears as a bare token, and that AGENT
+and OID stay the last two arguments.
+
+### F-24 · C3 · A malformed command line was retried as if transient
+The run burned two backoffs retrying a deterministic usage error, which
+buried the real cause behind warnings that implicated the device.
+**Fixed:** a `USAGE:` banner is now `SnmpInvocationError` — classified as a
+bug in this code, never retried.
+
+### F-25 · C2 · One failing section aborted the whole poll
+The alarm walk failed, so the PM section never ran and the run taught us
+nothing about it. `poll_device` caught only `SnmpNoSuchObject`; anything else
+propagated out.
+**Fixed:** each section is isolated, records a capability gap, and the poll
+continues. Per-section errors are returned and printed by the CLI.
+
+### F-26 · C1 · A failed alarm walk would have cleared every standing alarm
+Latent, and more dangerous than the bug that exposed it. A full poll is
+treated as authoritative — anything absent is cleared. But an *errored* walk
+is not evidence of absence, and the reconcile step could not tell the
+difference. On a device with 20 standing alarms, one transient SNMP failure
+would have emitted 20 spurious clears into NSP.
+**Fixed:** a failed walk skips reconciliation entirely. Two regression tests.
+
+---
+
 ## What I kept, unchanged, because it is right
 
 * **The row-editor protocol analysis.** Verified verbatim against the
@@ -478,7 +555,7 @@ which drives the real `_run` path rather than a stub.
 | F-04 | C2 | "No SNMPv3" is wrong for the switch | Corrected; posture doc rewritten |
 | F-05 | C2 | ADR never examined the EMS northbound MIB | ADR rewritten; hybrid recommended |
 | F-06 | C2 | 2,206 switch + ~1,400 DSL objects unanalysed | Documented with prioritisation |
-| F-07 | C2 | LLDP gap concluded without testing standard MIB | Lab test added to checklist |
+| F-07 | C2 | LLDP gap concluded without testing standard MIB | **Resolved 2026-09-19** — standard MIB works; only the vendor branch is missing |
 | F-08 | C2 | 2 vendor questions answerable from the repo | Answered; units encoded in code |
 | F-09 | C3 | One missing OID discards the whole GET | Fixed |
 | F-10 | C3 | No retry/backoff; no error classification | Fixed |
@@ -494,6 +571,10 @@ which drives the real `_run` path rather than a stub.
 | F-20 | C4 | Status claims stronger than evidence | Rewritten |
 | F-21 | C2 | `Severity()` called on prose cross-reference rows | Fixed; `parse_severity` + test |
 | F-22 | C3 | Community leaked via chained `TimeoutExpired` | Fixed; exception scrubbed + test |
+| F-23 | C1 | `-Cr 25` as two argv tokens — every walk failed | Fixed; argv now unit-tested |
+| F-24 | C3 | Malformed command line retried as transient | Fixed; `SnmpInvocationError` |
+| F-25 | C2 | One failing section aborted the whole poll | Fixed; sections isolated |
+| F-26 | C1 | Failed walk would clear every standing alarm | Fixed; reconcile skipped |
 
 **Not fixed, deliberately:** the switch `Lm*LossRate` scale (genuinely
 unstated in any MIB — stays a vendor question, and the assumed scale is never

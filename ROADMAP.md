@@ -28,9 +28,25 @@ NSP/SDK access". That is mostly true but it hid three things:
 
 ## Now — highest value per hour, nothing blocked
 
-### N1 · Run the Communicator against the lab ML540M  ⏱ ~1 hour
-Still the biggest single gap. `poll-once` has never been executed against
-`192.168.1.99`. Every OID is verified against the MIBs, so this is about
+### N1 · Run the Communicator against the lab ML540M  ⏱ ~1 hour — ATTEMPTED 2026-09-19, RE-RUN NEEDED
+**First attempt failed in 2 seconds** — on a defect in this adaptor, not the
+device: net-snmp's `-Cr` option was emitted as two argv tokens, so every walk
+died with a usage banner (F-23). Fixed, along with three weaknesses the
+failure exposed (F-24 … F-26), including a latent bug where a failed alarm
+walk would have cleared every standing alarm on the device.
+
+That is a good outcome for an hour's work: four defects, one of them C1,
+none of which any amount of mocking could have surfaced. But the questions
+N1 was meant to answer are still open, so **re-run it**.
+Capture: `docs/lab-results/ml540m-poll-once-20260919.txt`.
+
+Still unanswered: walk duration against a real agent; whether this agent
+handles GETBULK correctly (now toggleable per device via `use_bulkwalk`);
+whether `currentAlarmTable` holds link-down rows — all 30 interfaces are
+down, so it plausibly does, which would be the first real exercise of the
+alarm decode path; whether the Y.1731 PM tables are populated at all.
+
+`poll-once` has never completed against `192.168.1.99`. Every OID is verified against the MIBs, so this is about
 agent behaviour, not correctness of the numbers: response formats, walk
 durations, whether `snmpbulkwalk` is accepted, whether the PM tables are
 populated at all on this firmware.
@@ -41,13 +57,42 @@ actelis-mediation --config etc/devices.yaml poll-once --device lab-switch-01
 actelis-mediation --config etc/devices.yaml alarms  --device lab-switch-01
 ```
 
-### N2 · Walk the *standard* LLDP-MIB on the switch  ⏱ 5 minutes
-Retires or confirms the flagged topology risk (F-07). The proprietary branch
-returned `No Such Object`; the standard MIB was never tried.
+### ~~N2 · Walk the *standard* LLDP-MIB on the switch~~ — DONE 2026-09-19
+**The standard `LLDP-MIB` is implemented.** Configuration group and
+`lldpLocalSystemData` both return real data, LLDP is running `txAndRx` on all
+ten ports, and the chassis ID carries the Actelis OUI. Only the *proprietary*
+status subtree is absent. Topology discovery is therefore not a flagged risk
+for the switch — it goes through the standard MIB.
+See `docs/lab-results/ml540m-lldp-20260919.txt` and F-07.
+
+Two gaps closed as a side effect: standard **`IF-MIB` is implemented** on the
+switch (interface-counter PM is available), and `lldpLocSysName` /
+`lldpLocChassisId` / `lldpLocSysDesc` are better inventory and
+firmware-drift keys than `productModel`.
+
+### N2a · Bring up one link and walk `lldpRemTable`  ⏱ 10 minutes
+The one thing N2 could *not* establish: all 30 interfaces are
+`ifOperStatus = down(2)`, so no neighbour can be learned and an empty
+`lldpRemTable` proves nothing. Connect anything that speaks LLDP — a laptop
+running `lldpd`, another switch — then:
 
 ```bash
-snmpwalk -v2c -c "$LAB_SWITCH_RO" -On 192.168.1.99 1.0.8802.1.1.2.1.4   # lldpRemTable
+snmpwalk -v2c -c "$LAB_SWITCH_RO" -On 192.168.1.99 1.0.8802.1.1.2.1.4.1   # lldpRemTable
+snmpwalk -v2c -c "$LAB_SWITCH_RO" -On 192.168.1.99 1.0.8802.1.1.2.1.2.6.0 # lldpStatsRemTablesInserts
+snmpget  -v2c -c "$LAB_SWITCH_RO" -Ovq 192.168.1.99 1.0.8802.1.1.2.1.2.7.0 # ...Deletes
 ```
+
+`lldpStatsRemTablesInserts` is the quick tell — if it is non-zero the switch
+has learned neighbours at some point, which confirms the whole path end to
+end even if the table is empty right now.
+
+### N2b · Add the standard LLDP-MIB and IF-MIB to the adaptor  ⏱ ~half a day
+Now that both are confirmed present, they are the portable route to topology
+and interface PM — and being standards-based, they will behave the same on
+the ML600 family. Concretely: add the `lldp*` and `if*` OIDs to
+`poll/oids.py` with conformance coverage, fold `lldpLocSysName` /
+`lldpLocChassisId` into the identity poll, and add an `lldpRemTable` poller
+producing adjacency records.
 
 ### N3 · Capture one real trap  ⏱ ~20 minutes
 The trap decoder has never seen a real payload — the one part of the original

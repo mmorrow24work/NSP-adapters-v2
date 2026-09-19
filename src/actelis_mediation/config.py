@@ -71,6 +71,8 @@ class AppConfig:
                     timeout_s=float(spec.get("timeout_s", 3.0)),
                     retries=int(spec.get("retries", 2)),
                     walk_timeout_s=float(spec.get("walk_timeout_s", 300.0)),
+                    max_repetitions=int(spec.get("max_repetitions", 25)),
+                    use_bulkwalk=bool(spec.get("use_bulkwalk", True)),
                 ),
                 intervals=spec.get("poll", {}) or {}))
         storage = raw.get("storage", {})

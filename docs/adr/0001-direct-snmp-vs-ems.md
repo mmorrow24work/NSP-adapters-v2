@@ -47,8 +47,10 @@ Those map onto the three genuine weaknesses of the direct-SNMP design:
 2. **No clear semantics on the modem.** `ACTELIS-ALARM-MIB` has
    `alarmRaised`/`alarmCleared` traps, but the polled table has no state
    column equivalent to the switch's `alm-Cleared(2)`.
-3. **No topology source.** The ADR assumed LLDP; the tested firmware does not
-   implement the proprietary LLDP status subtree at all.
+3. **No topology source** — as understood when this ADR was first written.
+   Partly retracted on 2026-09-19: the *standard* `LLDP-MIB` is implemented
+   and was simply never tested. The vendor branch is indeed absent. See the
+   updated consequence below.
 
 An ADR that does not mention the alternative it rejected will not survive
 review by anyone who opens that archive.
@@ -121,8 +123,19 @@ These are now question 1 in `docs/vendor-questions/actelis.md`.
 * Alarm correlation must be synthesised locally on the direct path — done in
   `model/alarms.py`, and it works, but a vendor-supplied `alarmID` would be
   strictly better.
-* Topology has no confirmed source yet. Three candidates, in cost order:
-  standard `LLDP-MIB` on the switch (untested — ADR-0002 lab item), the EMS
-  `topologyTable`, or NSP-side manual/inferred topology.
+* **Topology now has a confirmed source on the switch.** Tested 2026-09-19:
+  the standard `LLDP-MIB` (`1.0.8802.1.1.2`) is implemented on firmware
+  `00.00.16`, running `txAndRx` on all ten ports, with
+  `lldpLocalSystemData` populated. Only the vendor's own status subtree is
+  missing. The neighbour table itself is still unproven because every
+  interface was down at test time, but the path is there.
+  See `docs/lab-results/ml540m-lldp-20260919.txt` and F-07.
+
+  This weakens one of the three arguments for the EMS path — the direct
+  route has a standards-based topology source after all, and being standard
+  it should behave the same on the ML600 family. The EMS `topologyTable`
+  remains interesting for its *service-level* view (`deviceParent`,
+  `bst-central`/`bst-remote`/`cpe` roles), which LLDP adjacency does not
+  give you, but it is no longer the only candidate.
 * If the EMS is not deployed, nothing is lost: the direct path is complete on
   its own and the hybrid is an enhancement, not a dependency.

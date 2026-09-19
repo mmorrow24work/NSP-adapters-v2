@@ -95,13 +95,34 @@ somewhat under half of it.
 | `IF-INVERTED-STACK-MIB` | 3 | 0 |  |
 | `ML560M-SYSTEM-MIB` | 1 | 1 | Another device family present in the archive. |
 
+## Confirmed present on real hardware
+
+Walking the lab ML540M on 2026-09-19 established that two of the "standard
+MIBs shipped as dependencies, possibly not implemented" entries above are in
+fact implemented on firmware `00.00.16`:
+
+| Module | Evidence |
+|---|---|
+| `LLDP-MIB` (`1.0.8802.1.1.2`) | Config group and `lldpLocalSystemData` populated; LLDP running `txAndRx` on all ten ports |
+| `IF-MIB` (`1.3.6.1.2.1.2`) | `ifOperStatus` returned 30 entries |
+
+That settles the question the table above says should be answered by a walk
+rather than assumed. Both are now priority items: `IF-MIB` is the universal
+interface-counter PM source and has zero rows in the PM mapping, and
+`LLDP-MIB` is the topology source. Being standards-based, both should behave
+the same on the ML600 family — worth confirming on the first reachable unit.
+
+Capture: `../lab-results/ml540m-lldp-20260919.txt`.
+
 ## Recommended order
 
 1. **`ML540M-MEP-MIB`** — already cited by the alarm mapping; the
    inconsistency should be closed before the mapping goes to Nokia.
 2. **`ML540M-SNMP-MIB`** — already consequential (F-04); fold in and use it.
-3. **`ENTITY-MIB` + `IF-MIB` (DSL)** — NSP inventory and interface PM are
-   table stakes for any adaptor, and both are standards-based.
+3. **`IF-MIB` + `LLDP-MIB` (switch, both confirmed implemented)** — interface
+   PM and topology, now known to work rather than assumed. Then `ENTITY-MIB`
+   and `IF-MIB` on the DSL side: NSP inventory and interface PM are table
+   stakes for any adaptor, and all are standards-based.
 4. **`FTTN-MIB` triage** — 521 objects. Establish what it is before deciding.
 5. **`ML540M-DDMI-MIB`** — optical PM and thresholds, cheap to add.
 6. **Security cluster** (`AUTH`/`USERS`/`PRIVILEGE`/`ACCESS-MANAGEMENT`/

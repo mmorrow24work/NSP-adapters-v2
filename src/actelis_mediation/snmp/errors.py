@@ -43,5 +43,13 @@ class SnmpBadValue(SnmpError):
     """wrongType, badValue, wrongLength, inconsistentValue on a SET."""
 
 
+class SnmpInvocationError(SnmpError):
+    """The adaptor built a command line net-snmp would not accept.
+
+    A bug in this code, not a device or network condition -- so it is never
+    retried, and the message names the command rather than blaming the agent.
+    """
+
+
 class SnmpToolMissing(SnmpError):
     """The net-snmp CLI tools are not installed or not on PATH."""

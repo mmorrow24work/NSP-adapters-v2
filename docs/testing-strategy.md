@@ -75,6 +75,23 @@ failure:
 This turns firmware/MIB drift from a code-review problem into a build
 failure. It is also what would have caught F-01 on day one.
 
+### 2a. What layers 1 and 2 structurally cannot catch
+
+The first live run (N1) failed on a malformed net-snmp command line — `-Cr 25`
+where net-snmp requires `-Cr25`. Neither layer above could have caught it:
+`FakeBackend` answers at the Python level and never builds a command line, and
+MIB conformance checks OIDs, not invocations.
+
+The general shape: **layers 1 and 2 test what happens to the result of an
+operation, never the operation itself.** Anything at the boundary — argv
+construction, environment, process handling, output parsing of a format we
+have not seen — is invisible to both.
+
+`tests/test_snmp_argv.py` closes that specific hole by asserting the exact
+command line without running it. The wider lesson is that every such boundary
+deserves one cheap test of its own, and that a green suite across layers 1 and
+2 says nothing about whether the thing runs.
+
 ### 3. Hardware validation — still the real gap
 
 Unchanged from the original's honest assessment, and worth restating plainly:
@@ -115,13 +132,24 @@ Watch for: walk durations, whether `snmpbulkwalk` is accepted, whether the
 Y.1731 PM tables are populated at all on firmware `00.00.16`, and what
 `capability_gaps` records.
 
-**L2 · Standard LLDP-MIB** (~5 min) — retires or confirms the topology risk.
+**L2 · Standard LLDP-MIB** — ✅ **done 2026-09-19, risk retired.**
+The standard MIB is implemented; only the proprietary status subtree is
+absent. Capture: `docs/lab-results/ml540m-lldp-20260919.txt`.
+
+A lesson worth carrying into the other lab items: walking the *leaf* you care
+about (`...1.4`, the neighbour table) could not distinguish "module not
+implemented" from "implemented, no neighbours". Walking the module root and
+its `...LocalSystemData` group settled it in one command, because local data
+is present whenever the module is, independent of the network around it.
+Prefer a probe whose result is unambiguous over one that merely answers the
+question you started with.
+
+Still open — `lldpRemTable` itself, because all 30 interfaces were down at
+test time (ROADMAP N2a):
 ```bash
-snmpwalk -v2c -c "$LAB_SWITCH_RO" -On 192.168.1.99 1.0.8802.1.1.2.1.4
+snmpwalk -v2c -c "$LAB_SWITCH_RO" -On 192.168.1.99 1.0.8802.1.1.2.1.4.1
+snmpget  -v2c -c "$LAB_SWITCH_RO" -Ovq 192.168.1.99 1.0.8802.1.1.2.1.2.6.0
 ```
-The proprietary branch (`1.3.6.1.4.1.5468.100.34.1.3.2`) returned `No Such
-Object`. The standard MIB ships in the vendor's own ML600 archive and was
-never tried.
 
 **L3 · Capture a real trap** (~20 min) — the least-evidenced component.
 ```bash

@@ -25,6 +25,11 @@ devices:
     timeout_s: 3.0
     retries: 2
     walk_timeout_s: 300.0
+    # GETBULK is far faster on large tables, but embedded agents vary in how
+    # well they implement it. Set false to force plain GETNEXT walks when
+    # comparing behaviour against a specific device.
+    use_bulkwalk: true
+    max_repetitions: 25
     poll:
       identity_interval_s: 1800
       alarm_interval_s: 60

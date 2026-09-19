@@ -24,7 +24,7 @@ from ..model import alarms as am
 from ..model import tables, units
 from ..model.alarms import Alarm, AlarmState, Severity, parse_severity
 from ..snmp.backend import SnmpBackend, SnmpTarget
-from ..snmp.errors import SnmpNoSuchObject
+from ..snmp.errors import SnmpError, SnmpNoSuchObject
 from ..snmp.oid import rows_from_columns
 from ..store import Store
 from . import oids
@@ -248,39 +248,67 @@ def poll_pm_switch(backend: SnmpBackend, target: SnmpTarget, mapping: PmMapping)
 
 def poll_device(name: str, backend: SnmpBackend, target: SnmpTarget, device_type: str,
                 store: Store, alarm_mapping: AlarmMapping, pm_mapping: PmMapping,
-                what=("identity", "alarms", "pm")) -> dict[str, int]:
+                what=("identity", "alarms", "pm")) -> dict:
+    """Poll one device. Each section is isolated from the others.
+
+    Originally only ``SnmpNoSuchObject`` was caught, so any other SNMP failure
+    in one section aborted the whole cycle. The first live run demonstrated
+    why that is wrong: a malformed walk killed the alarm section and took the
+    PM section with it, even though PM would have failed differently and told
+    us something. A fault in one subtree should cost that subtree, not the
+    collection cycle.
+
+    Errors are recorded as capability gaps and returned in ``result["errors"]``
+    so the caller can report them without having to parse logs.
+    """
     now = now_iso()
     store.upsert_device(name, device_type, target.host, now)
-    result = {"identity": 0, "alarm_transitions": 0, "pm_samples": 0}
+    result: dict = {"identity": 0, "alarm_transitions": 0, "pm_samples": 0, "errors": []}
+
+    def _record(section: str, exc: Exception) -> None:
+        detail = f"{exc.__class__.__name__}: {exc}"
+        store.record_capability_gap(name, section, detail[:300], now)
+        result["errors"].append((section, detail))
+        logger.warning("%s: %s section failed: %s", name, section, detail)
 
     if "identity" in what:
         try:
             identity = poll_identity(backend, target, device_type)
             store.record_identity(name, now, identity)
             result["identity"] = len(identity)
-        except SnmpNoSuchObject as exc:
-            store.record_capability_gap(name, "identity", str(exc)[:300], now)
+        except SnmpError as exc:
+            _record("identity", exc)
 
     if "alarms" in what:
         state = AlarmState()
         state.load(store.load_alarm_state(name))
+        observed, failed = [], False
         try:
             observed = (observe_alarms_switch(backend, target, alarm_mapping)
                         if device_type == "switch"
                         else observe_alarms_dsl(backend, target, alarm_mapping))
         except SnmpNoSuchObject as exc:
-            store.record_capability_gap(name, "alarm-table", str(exc)[:300], now)
-            observed = []
-        transitions = state.reconcile(observed)
-        result["alarm_transitions"] = store.apply_transitions(name, now, transitions, "poll")
+            _record("alarm-table", exc)
+        except SnmpError as exc:
+            # Unlike an unimplemented table, this is NOT authoritative
+            # evidence that the alarms are gone -- so do not reconcile, or
+            # every standing alarm would be spuriously cleared.
+            _record("alarm-table", exc)
+            failed = True
+        if not failed:
+            transitions = state.reconcile(observed)
+            result["alarm_transitions"] = store.apply_transitions(
+                name, now, transitions, "poll")
 
     if "pm" in what:
+        samples = []
         try:
             samples = (poll_pm_switch(backend, target, pm_mapping) if device_type == "switch"
                        else poll_pm_dsl(backend, target, pm_mapping))
         except SnmpNoSuchObject as exc:
-            store.record_capability_gap(name, "pm-tables", str(exc)[:300], now)
-            samples = []
+            _record("pm-tables", exc)
+        except SnmpError as exc:
+            _record("pm-tables", exc)
         store.record_pm(name, samples)
         result["pm_samples"] = len(samples)
 

@@ -1,0 +1,90 @@
+Lab validation run — standard LLDP-MIB and IF-MIB on the ML540M
+Date: 2026-09-19
+Target: 192.168.1.99  (firmware 00.00.16)
+Purpose: ROADMAP N2 / finding F-07 -- the 2026-09-18 run concluded that LLDP
+  topology discovery was unavailable on this firmware, having tested ONLY the
+  proprietary subtree. This run tests the standard LLDP-MIB (1.0.8802.1.1.2),
+  which ships in the vendor's own ML600 archive and had never been tried.
+
+------------------------------------------------------------
+0. The original negative result, reproduced
+   snmpwalk ... 1.0.8802.1.1.2.1.4        # lldpRemoteSystemsData
+.1.0.8802.1.1.2.1.4 = No Such Object available on this agent at this OID
+
+   Taken alone this is ambiguous: it cannot distinguish "the module is not
+   implemented" from "it is, but there are no neighbours". Steps 1-3 resolve it.
+
+------------------------------------------------------------
+1. Standard LLDP-MIB configuration group -- IMPLEMENTED
+   snmpwalk ... 1.0.8802.1.1.2
+.1.0.8802.1.1.2.1.1.1.0 = INTEGER: 30        # lldpMessageTxInterval
+.1.0.8802.1.1.2.1.1.2.0 = INTEGER: 4         # lldpMessageTxHoldMultiplier
+.1.0.8802.1.1.2.1.1.3.0 = INTEGER: 2         # lldpReinitDelay
+.1.0.8802.1.1.2.1.1.4.0 = INTEGER: 2         # lldpTxDelay
+.1.0.8802.1.1.2.1.1.5.0 = INTEGER: 5         # lldpNotificationInterval
+.1.0.8802.1.1.2.1.1.6.1.2.1 = INTEGER: 3     # lldpPortConfigAdminStatus = txAndRx
+  ... (ports 1-10, all 3 = txAndRx)
+.1.0.8802.1.1.2.1.1.6.1.3.1 = INTEGER: 1     # lldpPortConfigNotificationEnable = true
+  ... (ports 1-10, all 1)
+
+------------------------------------------------------------
+2. lldpLocalSystemData -- IMPLEMENTED AND POPULATED  (the decisive test)
+   Present whenever the module is implemented, independent of neighbours.
+   snmpwalk ... 1.0.8802.1.1.2.1.3
+.1.0.8802.1.1.2.1.3.1.0 = INTEGER: 4                               # lldpLocChassisIdSubtype = macAddress
+.1.0.8802.1.1.2.1.3.2.0 = STRING: "00-03-85-92-04-10"              # lldpLocChassisId (OUI 00:03:85 = Actelis)
+.1.0.8802.1.1.2.1.3.3.0 = STRING: "XMJ1-XMJ2-M540-02-010"          # lldpLocSysName
+.1.0.8802.1.1.2.1.3.4.0 = STRING: "00.00.16 2024-08-05T18:39:39+08:00"  # lldpLocSysDesc
+.1.0.8802.1.1.2.1.3.5.0 = STRING: " "                              # lldpLocSysCapSupported (blank)
+.1.0.8802.1.1.2.1.3.6.0 = STRING: " "                              # lldpLocSysCapEnabled (blank)
+.1.0.8802.1.1.2.1.3.7.1.2.1 = INTEGER: 7                           # lldpLocPortIdSubtype = local
+  ... (per port)
+
+------------------------------------------------------------
+3. Every interface is operationally DOWN -- so no neighbour can exist
+   snmpwalk ... 1.3.6.1.2.1.2.2.1.8       # IF-MIB ifOperStatus
+.1.3.6.1.2.1.2.2.1.8.1 .. .30 = INTEGER: 2    # down(2), all 30 entries
+
+   Note: standard IF-MIB is implemented, and ifTable carries 30 entries
+   against portCount=10 (physical ports plus VLAN/aggregate/internal
+   interfaces).
+
+------------------------------------------------------------
+4. Proprietary LLDP tree -- config present, status subtree still absent
+   snmpwalk ... 1.3.6.1.4.1.5468.100.34
+.1.3.6.1.4.1.5468.100.34.1.2.1.1.0 = Gauge32: 2      # config globals
+.1.3.6.1.4.1.5468.100.34.1.2.1.3.0 = Gauge32: 30     # msg tx interval
+.1.3.6.1.4.1.5468.100.34.1.2.2.1.3.1000001 = INTEGER: 1   # per-port admin state
+.1.3.6.1.4.1.5468.100.34.1.2.2.1.4.1000001 = INTEGER: 2
+.1.3.6.1.4.1.5468.100.34.1.2.2.1.5.1000001 = Gauge32: 31
+  ... (ports 1-10)
+   ml540mLldpStatusNeighborsInformationTable (...34.1.3.2) remains No Such Object.
+
+------------------------------------------------------------
+RESULT
+
+The 2026-09-18 conclusion -- "LLDP-based topology discovery cannot be assumed
+for the switch" -- is NOT supported as stated.
+
+- The standard LLDP-MIB IS implemented: configuration group and
+  lldpLocalSystemData both respond with real data, and LLDP is running in
+  txAndRx mode on all ten ports.
+- Only the PROPRIETARY status subtree is missing. That part of the original
+  finding stands.
+- The neighbour table could not be evaluated either way, because all 30
+  interfaces are operationally down. With no link up there is no neighbour to
+  learn, so an empty lldpRemTable is the correct result, not a defect.
+
+STILL TO DO: bring up one link to an LLDP-speaking device and re-walk
+1.0.8802.1.1.2.1.4.1 (lldpRemTable). Until then the neighbour path is
+untested rather than broken.
+
+Useful side findings:
+- lldpLocChassisId gives the switch's MAC and lldpLocSysName gives a real
+  deployed device name ("XMJ1-XMJ2-M540-02-010") -- both better inventory
+  keys than productModel, and both available over the standard MIB.
+- lldpLocSysDesc carries the firmware version and build date, which is a
+  cheap per-device firmware-drift signal.
+- Standard IF-MIB is implemented on the switch, so interface counters are
+  available for PM (see docs/mib-analysis/coverage-gaps.md, where IF-MIB was
+  flagged as an uncovered gap).

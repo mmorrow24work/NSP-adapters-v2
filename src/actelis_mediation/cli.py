@@ -41,9 +41,12 @@ def cmd_poll_once(args) -> int:
             try:
                 result = poll_device(dev.name, backend, dev.target, dev.device_type,
                                      store, am, pm)
-                print(f"  ok: {result['identity']} identity, "
+                print(f"  {result['identity']} identity, "
                       f"{result['alarm_transitions']} alarm transition(s), "
                       f"{result['pm_samples']} PM sample(s)")
+                for section, detail in result.get("errors", []):
+                    failures += 1
+                    print(f"  ! {section}: {detail}")
             except Exception as exc:                      # noqa: BLE001
                 failures += 1
                 print(f"  FAILED: {exc.__class__.__name__}: {exc}")

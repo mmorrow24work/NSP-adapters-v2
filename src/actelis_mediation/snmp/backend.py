@@ -33,6 +33,10 @@ class SnmpTarget:
     # N-port HDSL2-SHDSL interval walk on a slow link.
     walk_timeout_s: float = 300.0
     max_repetitions: int = 25
+    # GETBULK is much faster on large tables, but embedded agents vary in how
+    # well they implement it. Set false to force plain GETNEXT walks when
+    # comparing behaviour against a specific device.
+    use_bulkwalk: bool = True
     def write_community(self) -> str:
         if not self.rw_community:
             raise ValueError(f"{self.host}: no write community configured; cannot SET")
