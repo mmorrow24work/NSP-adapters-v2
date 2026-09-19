@@ -1,0 +1,112 @@
+Lab validation run — Actelis ML540M switch
+Date: 2026-09-18
+Target: 192.168.1.99
+Script: scripts/validate_snmp_switch.sh
+Communities used: RO=public, RW=private (SNMP factory defaults on this lab unit —
+  do not assume these are safe/present on production units)
+
+Command:
+  ./validate_snmp_switch.sh 192.168.1.99 public private
+
+------------------------------------------------------------
+1. Basic reachability + identity (productModel / swVersion / portCount)
+STRING: "ML540M"
+STRING: "00.00.16"
+INTEGER: 10
+------------------------------------------------------------
+2a. LLDP admin state per port — confirms whether LLDP is even enabled
+    before treating an empty neighbor table as a problem
+.1.3.6.1.4.1.5468.100.34.1.2.2.1.3.1000001 = INTEGER: 1
+.1.3.6.1.4.1.5468.100.34.1.2.2.1.3.1000002 = INTEGER: 1
+.1.3.6.1.4.1.5468.100.34.1.2.2.1.3.1000003 = INTEGER: 1
+.1.3.6.1.4.1.5468.100.34.1.2.2.1.3.1000004 = INTEGER: 1
+.1.3.6.1.4.1.5468.100.34.1.2.2.1.3.1000005 = INTEGER: 1
+.1.3.6.1.4.1.5468.100.34.1.2.2.1.3.1000006 = INTEGER: 1
+.1.3.6.1.4.1.5468.100.34.1.2.2.1.3.1000007 = INTEGER: 1
+.1.3.6.1.4.1.5468.100.34.1.2.2.1.3.1000008 = INTEGER: 1
+.1.3.6.1.4.1.5468.100.34.1.2.2.1.3.1000009 = INTEGER: 1
+.1.3.6.1.4.1.5468.100.34.1.2.2.1.3.1000010 = INTEGER: 1
+------------------------------------------------------------
+2b. LLDP neighbor table walk — for NSP topology discovery
+    (expect this to be empty unless LLDP is enabled AND a neighbor
+    that also speaks LLDP is connected on that port)
+.1.3.6.1.4.1.5468.100.34.1.3.2 = No Such Object available on this agent at this OID
+------------------------------------------------------------
+3. LACP aggregation config table walk
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.2.1000001 = INTEGER: 2
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.2.1000002 = INTEGER: 2
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.2.1000003 = INTEGER: 2
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.2.1000004 = INTEGER: 2
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.2.1000005 = INTEGER: 2
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.2.1000006 = INTEGER: 2
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.2.1000007 = INTEGER: 2
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.2.1000008 = INTEGER: 2
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.2.1000009 = INTEGER: 2
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.2.1000010 = INTEGER: 2
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.3.1000001 = Gauge32: 0
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.3.1000002 = Gauge32: 0
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.3.1000003 = Gauge32: 0
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.3.1000004 = Gauge32: 0
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.3.1000005 = Gauge32: 0
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.3.1000006 = Gauge32: 0
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.3.1000007 = Gauge32: 0
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.3.1000008 = Gauge32: 0
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.3.1000009 = Gauge32: 0
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.3.1000010 = Gauge32: 0
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.4.1000001 = INTEGER: 1
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.4.1000002 = INTEGER: 1
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.4.1000003 = INTEGER: 1
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.4.1000004 = INTEGER: 1
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.4.1000005 = INTEGER: 1
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.4.1000006 = INTEGER: 1
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.4.1000007 = INTEGER: 1
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.4.1000008 = INTEGER: 1
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.4.1000009 = INTEGER: 1
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.4.1000010 = INTEGER: 1
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.5.1000001 = INTEGER: 1
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.5.1000002 = INTEGER: 1
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.5.1000003 = INTEGER: 1
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.5.1000004 = INTEGER: 1
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.5.1000005 = INTEGER: 1
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.5.1000006 = INTEGER: 1
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.5.1000007 = INTEGER: 1
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.5.1000008 = INTEGER: 1
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.5.1000009 = INTEGER: 1
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.5.1000010 = INTEGER: 1
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.6.1000001 = Gauge32: 32768
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.6.1000002 = Gauge32: 32768
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.6.1000003 = Gauge32: 32768
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.6.1000004 = Gauge32: 32768
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.6.1000005 = Gauge32: 32768
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.6.1000006 = Gauge32: 32768
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.6.1000007 = Gauge32: 32768
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.6.1000008 = Gauge32: 32768
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.6.1000009 = Gauge32: 32768
+.1.3.6.1.4.1.5468.100.35.1.2.1.1.6.1000010 = Gauge32: 32768
+.1.3.6.1.4.1.5468.100.35.1.2.2.1.0 = Gauge32: 32768
+------------------------------------------------------------
+4. SNMP SET round-trip test on LLDP tx interval (read, write back unchanged)
+   current tx interval: 30
+iso.3.6.1.4.1.5468.100.34.1.2.1.3.0 = Gauge32: 30
+   re-reading to confirm SET was accepted:
+Gauge32: 30
+------------------------------------------------------------
+Done. If steps 1, 2a and 3 returned data, direct-to-switch SNMPv2c is
+confirmed for the ML540M. An empty 2b is expected if nothing LLDP-aware
+is plugged into this unit right now — not a failure of the OID itself.
+
+---
+Notes (added post-run, not script output):
+- Write community was NOT "public" on the first attempt — that run timed
+  out on the SNMP SET (see git history of this script for the pre-fix
+  version). The correct write community ("private") was discovered by
+  reading it directly off the device:
+    snmpget -v2c -c public -Ov 192.168.1.99 \
+      1.3.6.1.4.1.5468.100.36.1.2.1.3.0 \
+      1.3.6.1.4.1.5468.100.36.1.2.1.4.0
+  -> STRING: "public"   (ml540mSnmpConfigGlobalsReadCommunity)
+  -> STRING: "private"  (ml540mSnmpConfigGlobalsWriteCommunity)
+- 2b returning "No Such Object" (not an empty table) indicates the LLDP
+  status/neighbor subtree is not implemented on this firmware build
+  (00.00.16), despite LLDP being administratively enabled per-port (2a).
+  See docs/architecture-decision-direct-snmp.md for the full analysis.

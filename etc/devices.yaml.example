@@ -1,0 +1,50 @@
+# Device inventory for the standalone Communicator prototype.
+#
+# Credentials are NOT stored here. Each device names an environment variable
+# holding its community string. The original project committed a config
+# carrying the SNMP factory defaults (public/private) inline, which is how
+# default credentials end up deployed.
+#
+#   export LAB_SWITCH_RO=...    export LAB_SWITCH_RW=...
+#
+# Copy to etc/devices.yaml (gitignored) and fill in.
+
+snmp:
+  # "argv"      -- community passed via -c (proven; visible in `ps`)
+  # "snmp_conf" -- community written to a private snmp.conf, kept off argv.
+  #                NOT yet verified against a live device: see
+  #                docs/security-posture.md before enabling in production.
+  community_mode: argv
+
+devices:
+  - name: lab-switch-01
+    device_type: switch
+    host: 192.168.1.99
+    ro_community_env: LAB_SWITCH_RO
+    rw_community_env: LAB_SWITCH_RW
+    timeout_s: 3.0
+    retries: 2
+    walk_timeout_s: 300.0
+    poll:
+      identity_interval_s: 1800
+      alarm_interval_s: 60
+      # 5 min comfortably beats the 15-minute bin rollover.
+      pm_interval_s: 300
+
+  # No ML620R/ML600-family unit has been available to this project. Fill in
+  # host and credentials when one is reachable, then run:
+  #   actelis-mediation --config etc/devices.yaml poll-once --device lab-modem-01
+  - name: lab-modem-01
+    device_type: dsl-modem
+    host: 192.0.2.1
+    ro_community_env: LAB_MODEM_RO
+    rw_community_env: LAB_MODEM_RW
+    poll:
+      identity_interval_s: 1800
+      alarm_interval_s: 60
+      # The modem's ACTELIS-SERV-MON-MIB EVC counters keep only Curr/Prev --
+      # one completed interval, overwritten by the next. Poll well inside it.
+      pm_interval_s: 300
+
+storage:
+  sqlite_path: var/actelis-mediation.db

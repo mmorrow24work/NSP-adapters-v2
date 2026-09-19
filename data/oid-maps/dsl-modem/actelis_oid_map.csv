@@ -1,0 +1,405 @@
+MIB Module,Object Name,OID,Kind,Syntax,Access,Description
+ACTELIS-ALARM-MIB,alarmNotificationEnable,1.3.6.1.4.1.5468.5.1,scalar,"INTEGER {enabled (1) , disabled (2)}",read-write,"Alarm Notifications can be sent or not, controlled manually, per whole NE system"
+ACTELIS-ALARM-MIB,alarmTableRowCount,1.3.6.1.4.1.5468.5.2,scalar,Unsigned32,read-only,"Counter of all fault conditions (Alarmed and Non-Alarmed) currently raised on NE, represents a number of rows in alarm table"
+ACTELIS-ALARM-MIB,alarmTableLastEvent,1.3.6.1.4.1.5468.5.3,scalar,DateAndTime,read-only,Timestamp of Latest TL1 alarm raised on NE
+ACTELIS-ALARM-MIB,alarmIndex,1.3.6.1.4.1.5468.5.4.1.1,column,Unsigned32(1..4294967295),not-accessible,Index of Alarm. Used for Table running. Not accessible leaf (do not return any value on get).
+ACTELIS-ALARM-MIB,alarmTID,1.3.6.1.4.1.5468.5.4.1.2,column,DisplayString,read-only,System Identification (Terminal ID) of NE which is reporting Failure Condition
+ACTELIS-ALARM-MIB,alarmName,1.3.6.1.4.1.5468.5.4.1.3,column,DisplayString,read-only,"Failure Condition Name, i.e. LOSW, HSLDWN or INTRUDER"
+ACTELIS-ALARM-MIB,alarmedAID,1.3.6.1.4.1.5468.5.4.1.4,column,DisplayString,read-only,"Automatic Identification of TL1 Managed Object with Failure Condition on it, i.e. MLP-3-7, HSL-122 or ETH-5. Together with Name of alarm , AlarmAID pr"
+ACTELIS-ALARM-MIB,alarmedOID,1.3.6.1.4.1.5468.5.4.1.5,column,DisplayString,read-only,"Using hardcoded map, all TL1 AID are converted to SNMP Index used for them. System and Equipment entity are reported using iso(1).org(3).dod(6).intern"
+ACTELIS-ALARM-MIB,alarmDateTime,1.3.6.1.4.1.5468.5.4.1.6,column,DateAndTime,read-only,Raise Alarm Date and Time on NE
+ACTELIS-ALARM-MIB,alarmServiceAffect,1.3.6.1.4.1.5468.5.4.1.7,column,DisplayString,read-only,"Instead of enum coding, use text as reported in TL1 SA for service affecting, NSA for non-service affecting."
+ACTELIS-ALARM-MIB,alarmSeverity,1.3.6.1.4.1.5468.5.4.1.8,column,DisplayString,read-only,"Instead of enum coding, use text as reported in TL1 CR for critical, MJ for major, MN for minor, NA for non-alarmed"
+ACTELIS-ALARM-MIB,alarmDescription,1.3.6.1.4.1.5468.5.4.1.9,column,DisplayString,read-only,"Text description of Alarm possible reason, as appears in TL1 alarm"
+ML620R-MIB,channel,1.3.6.1.4.1.5468.510.1.1.1.1,column,Integer32 (1..4),read-only,Description.
+ML620R-MIB,dslService,1.3.6.1.4.1.5468.510.1.1.1.2,column,"INTEGER { rt(0), co(1) }",read-only,Description.
+ML620R-MIB,dslStandard,1.3.6.1.4.1.5468.510.1.1.1.3,column,"INTEGER { annexA(0), annexB(1), annexAB(2) }",read-only,Description.
+ML620R-MIB,dslAttenuation,1.3.6.1.4.1.5468.510.1.1.1.4,column,Integer32,read-only,This is valid only when the dslStatus value is 'Data'.
+ML620R-MIB,dslSNR,1.3.6.1.4.1.5468.510.1.1.1.5,column,Integer32,read-only,This is valid only when the dslStatus value is 'Data'.
+ML620R-MIB,dslStatus,1.3.6.1.4.1.5468.510.1.1.1.6,column,"INTEGER { handshaking(0), training(1), idle(2), data(3), notsupport(4) }",read-only,Description.
+ML620R-MIB,dslRate,1.3.6.1.4.1.5468.510.1.1.1.7,column,Integer32,read-only,Rate : xx kpbs. This is valid only when the dslStatus value is 'Data'.
+ML620R-MIB,macTableIndex,1.3.6.1.4.1.5468.510.1.2.1.1,column,INTEGER (1..8000),read-only,Description.
+ML620R-MIB,macType,1.3.6.1.4.1.5468.510.1.2.1.2,column,OCTET STRING,read-only,Description.
+ML620R-MIB,blongToVlan,1.3.6.1.4.1.5468.510.1.2.1.3,column,INTEGER (1..4095),read-only,Description.
+ML620R-MIB,macAddress,1.3.6.1.4.1.5468.510.1.2.1.4,column,OCTET STRING,read-only,Description.
+ML620R-MIB,portMembers,1.3.6.1.4.1.5468.510.1.2.1.5,column,"INTEGER { cpu(0), fastEthernet1(2), fastEthernet2(4), fastEthernet3(6), fastEthe",read-only,Description.
+ML620R-MIB,clearMacTable,1.3.6.1.4.1.5468.510.1.3,scalar,INTEGER { clear(1) },read-write,Description.
+ML620R-MIB,wanDesciiption,1.3.6.1.4.1.5468.510.1.5.1.1.1,column,OCTET STRING,read-only,Description.
+ML620R-MIB,wanVlid,1.3.6.1.4.1.5468.510.1.5.1.1.2,column,OCTET STRING,read-only,Description.
+ML620R-MIB,wanProtocol,1.3.6.1.4.1.5468.510.1.5.1.1.3,column,OCTET STRING,read-only,Description.
+ML620R-MIB,wanIP,1.3.6.1.4.1.5468.510.1.5.1.1.4,column,OCTET STRING,read-only,Description.
+ML620R-MIB,wanNetMask,1.3.6.1.4.1.5468.510.1.5.1.1.5,column,OCTET STRING,read-only,Description.
+ML620R-MIB,wanGateway,1.3.6.1.4.1.5468.510.1.5.1.1.6,column,OCTET STRING,read-only,Description.
+ML620R-MIB,wanStaus,1.3.6.1.4.1.5468.510.1.5.1.1.7,column,OCTET STRING,read-only,Description.
+ML620R-MIB,routeIndex,1.3.6.1.4.1.5468.510.1.6.1.1,column,INTEGER (1..16),read-only,Description.
+ML620R-MIB,routeDestination,1.3.6.1.4.1.5468.510.1.6.1.2,column,OCTET STRING,read-only,Description.
+ML620R-MIB,routeNetmask,1.3.6.1.4.1.5468.510.1.6.1.3,column,OCTET STRING,read-only,Description.
+ML620R-MIB,routeGateway,1.3.6.1.4.1.5468.510.1.6.1.4,column,OCTET STRING,read-only,Description.
+ML620R-MIB,firmwareVersion,1.3.6.1.4.1.5468.510.1.7.1,scalar,OCTET STRING,read-only,Description.
+ML620R-MIB,firmwareDate,1.3.6.1.4.1.5468.510.1.7.2,scalar,OCTET STRING,read-only,Description.
+ML620R-MIB,deviceMAC,1.3.6.1.4.1.5468.510.1.7.3,scalar,OCTET STRING,read-only,Description.
+ML620R-MIB,deviceUptime,1.3.6.1.4.1.5468.510.1.7.4,scalar,OCTET STRING,read-only,Device Uptime.
+ML620R-MIB,hslUptime,1.3.6.1.4.1.5468.510.1.7.5,scalar,OCTET STRING,read-only,Hsl Uptime.
+ML620R-MIB,serviceType,1.3.6.1.4.1.5468.510.2.1.1,scalar,"INTEGER { rt(1), co(2) }",read-write,Description.
+ML620R-MIB,wireMode,1.3.6.1.4.1.5468.510.2.1.2,scalar,"INTEGER { dsl2WireMode(3), dsl4WireMode(4), dsl6WireMode(5), dsl8WireMode(6) }",read-write,Description.
+ML620R-MIB,standType,1.3.6.1.4.1.5468.510.2.1.3,scalar,"INTEGER { annexA(7), annexB(8) }",read-write,Description.
+ML620R-MIB,lineProbe,1.3.6.1.4.1.5468.510.2.1.4,scalar,"INTEGER { disable(0), enable(1) }",read-write,Description.
+ML620R-MIB,minimumRate,1.3.6.1.4.1.5468.510.2.1.5,scalar,OCTET STRING,read-write,Description.
+ML620R-MIB,maximumRate,1.3.6.1.4.1.5468.510.2.1.6,scalar,OCTET STRING,read-write,Description.
+ML620R-MIB,dslMode,1.3.6.1.4.1.5468.510.2.1.7,scalar,"INTEGER { dslAtmMode(12), dslEfmMode(13) }",read-write,Description.
+ML620R-MIB,capListStyle,1.3.6.1.4.1.5468.510.2.1.8,scalar,"INTEGER { newcaplist(0), oldcaplist(1), auto(2) }",read-write,Description.
+ML620R-MIB,extendMode,1.3.6.1.4.1.5468.510.2.1.9,scalar,"INTEGER { disable(0), enable(1) }",read-write,Description.
+ML620R-MIB,extendRate,1.3.6.1.4.1.5468.510.2.1.10,scalar,Integer32 (24..1875),read-write,unit is 8kbps
+ML620R-MIB,portIndex,1.3.6.1.4.1.5468.510.2.2.1.1,column,INTEGER (1..4),read-only,Description.
+ML620R-MIB,speed,1.3.6.1.4.1.5468.510.2.2.1.2,column,"INTEGER { speed10Mbps(1), speed100Mbps(2), auto(3) }",read-write,Description.
+ML620R-MIB,duplex,1.3.6.1.4.1.5468.510.2.2.1.3,column,"INTEGER { halflDuplex(0), fullDuplex(1), autro(2) }",read-write,Description.
+ML620R-MIB,flowControl,1.3.6.1.4.1.5468.510.2.2.1.4,column,"INTEGER { disable(0), enable(1) }",read-write,Description.
+ML620R-MIB,maximumFrameSize,1.3.6.1.4.1.5468.510.2.2.1.5,column,Integer32 (0..9000),read-write,Description.
+ML620R-MIB,portStatus,1.3.6.1.4.1.5468.510.2.2.1.6,column,"INTEGER { down(0), speed10half(1), speed10full(2), speed100half(3), speed100full",read-only,Description.
+ML620R-MIB,sPortId,1.3.6.1.4.1.5468.510.2.3,scalar,INTEGER (0..65536),read-write,Description. This is Global VLAN Configuration Ethertype for Custom S-ports
+ML620R-MIB,valnIndex,1.3.6.1.4.1.5468.510.2.4.1.1,column,"INTEGER { vlanPort1(1), vlanPort2(2), vlanPort3(3), vlanPort4(4), gshdsl(5), e1(",read-only,Description.
+ML620R-MIB,portType,1.3.6.1.4.1.5468.510.2.4.1.2,column,"INTEGER { unaware(0), cPort(1) }",read-write,Description.
+ML620R-MIB,portVlan,1.3.6.1.4.1.5468.510.2.4.1.3,column,Integer32,read-write,Description.
+ML620R-MIB,ingressAcceptance,1.3.6.1.4.1.5468.510.2.4.1.4,column,"INTEGER { disable(0), enable(1) }",read-write,Description.
+ML620R-MIB,allowedVlans,1.3.6.1.4.1.5468.510.2.4.1.5,column,OCTET STRING,read-write,Description.
+ML620R-MIB,vlanmode,1.3.6.1.4.1.5468.510.2.4.1.6,column,"INTEGER { access(0), trunk(1), hybird(2) }",read-write,Description.
+ML620R-MIB,addDhcpVlanRange,1.3.6.1.4.1.5468.510.2.5.1,scalar,OCTET STRING,read-write,Description: if you want to set 1-21 and 33-35 and 37-37 you must set three times: 1-21 33-35 37-37
+ML620R-MIB,deleteDhcpVlanRange,1.3.6.1.4.1.5468.510.2.5.2,scalar,OCTET STRING,read-write,Description. similiar to add cmd.
+ML620R-MIB,dhcpServerModeConfiguration,1.3.6.1.4.1.5468.510.2.5.3,scalar,OCTET STRING,read-only,Description.
+ML620R-MIB,excludedIndex,1.3.6.1.4.1.5468.510.2.5.4.1.1,column,INTEGER (1..16),read-only,Description.
+ML620R-MIB,lowIPAddress,1.3.6.1.4.1.5468.510.2.5.4.1.2,column,IpAddress,read-write,Description.
+ML620R-MIB,highIPAddress,1.3.6.1.4.1.5468.510.2.5.4.1.3,column,IpAddress,read-write,Description.
+ML620R-MIB,excludeIPActive,1.3.6.1.4.1.5468.510.2.5.4.1.4,column,"INTEGER { delete(0), add(1), default(2) }",read-write,Description.
+ML620R-MIB,excludeStatus,1.3.6.1.4.1.5468.510.2.5.4.1.5,column,"INTEGER { disable(0), enable(1) }",read-write,Description.
+ML620R-MIB,dhcpPoolIndex,1.3.6.1.4.1.5468.510.2.5.5.1.1,column,INTEGER (1..16),read-only,Description.
+ML620R-MIB,dhcpPoolName,1.3.6.1.4.1.5468.510.2.5.5.1.2,column,OCTET STRING,read-write,Description.
+ML620R-MIB,dhcpPoolIPAddress,1.3.6.1.4.1.5468.510.2.5.5.1.3,column,IpAddress,read-write,Description.
+ML620R-MIB,dhcpPooSubnetMask,1.3.6.1.4.1.5468.510.2.5.5.1.4,column,IpAddress,read-write,Description.
+ML620R-MIB,dhcpPoolLeaseTime,1.3.6.1.4.1.5468.510.2.5.5.1.5,column,Integer32,read-write,Description.
+ML620R-MIB,dhcpPoolDefaultRouter,1.3.6.1.4.1.5468.510.2.5.5.1.6,column,IpAddress,read-write,Description.
+ML620R-MIB,dnsServer1,1.3.6.1.4.1.5468.510.2.5.5.1.7,column,IpAddress,read-write,Description.
+ML620R-MIB,dnsServer2,1.3.6.1.4.1.5468.510.2.5.5.1.8,column,IpAddress,read-write,Description.
+ML620R-MIB,dhcpPoolActive,1.3.6.1.4.1.5468.510.2.5.5.1.9,column,"INTEGER { delete(0), add(1), default(2) }",read-write,Description.
+ML620R-MIB,dhcpPoolStatus,1.3.6.1.4.1.5468.510.2.5.5.1.10,column,"INTEGER { disable(0), enable(1) }",read-write,Description.
+ML620R-MIB,dhcpClientIndex,1.3.6.1.4.1.5468.510.2.5.6.1.1,column,Integer32 (1..100),read-only,Description.
+ML620R-MIB,dhcpClientName,1.3.6.1.4.1.5468.510.2.5.6.1.2,column,OCTET STRING,read-only,Description.
+ML620R-MIB,dhcpMacAddress,1.3.6.1.4.1.5468.510.2.5.6.1.3,column,OCTET STRING,read-only,Description.
+ML620R-MIB,dhcpIPAddress,1.3.6.1.4.1.5468.510.2.5.6.1.4,column,OCTET STRING,read-only,Description.
+ML620R-MIB,dhcpLeaseTime,1.3.6.1.4.1.5468.510.2.5.6.1.5,column,OCTET STRING,read-only,Description.
+ML620R-MIB,wanIndex,1.3.6.1.4.1.5468.510.2.6.1.1.1,column,INTEGER (1..20),read-only,Description.
+ML620R-MIB,description,1.3.6.1.4.1.5468.510.2.6.1.1.2,column,OCTET STRING,read-write,Description.
+ML620R-MIB,vlanID,1.3.6.1.4.1.5468.510.2.6.1.1.3,column,INTEGER (0..4095),read-write,Description.
+ML620R-MIB,defaultRoute,1.3.6.1.4.1.5468.510.2.6.1.1.4,column,"INTEGER { disable(0), enable(1) }",read-write,Description.
+ML620R-MIB,nat,1.3.6.1.4.1.5468.510.2.6.1.1.5,column,"INTEGER { disable(0), enable(1) }",read-write,Description.
+ML620R-MIB,protocol,1.3.6.1.4.1.5468.510.2.6.1.1.6,column,"INTEGER { static(0), dhcp(1), pppoe(2), pppoa(3), ipoa(4) }",read-write,Description.
+ML620R-MIB,action,1.3.6.1.4.1.5468.510.2.6.1.1.7,column,"INTEGER { delete(0), edit(1), creat(2), default(4) }",read-write,Description.
+ML620R-MIB,wanStatus,1.3.6.1.4.1.5468.510.2.6.1.1.8,column,"INTEGER { disable(0), enablel(1) }",read-only,Description.
+ML620R-MIB,staticIPAddress,1.3.6.1.4.1.5468.510.2.6.2.1.1,column,IpAddress,read-write,Description.
+ML620R-MIB,staticSubnetMask,1.3.6.1.4.1.5468.510.2.6.2.1.2,column,IpAddress,read-write,Description.
+ML620R-MIB,staticGateway,1.3.6.1.4.1.5468.510.2.6.2.1.3,column,IpAddress,read-write,Description.
+ML620R-MIB,staticApply,1.3.6.1.4.1.5468.510.2.6.2.1.4,column,"INTEGER { disable(0), apply(1) }",read-write,Description.
+ML620R-MIB,dhcpStatus,1.3.6.1.4.1.5468.510.2.6.3.1.1,column,"INTEGER { disable(0), enable(1) }",read-only,Description.
+ML620R-MIB,userName,1.3.6.1.4.1.5468.510.2.6.4.1.1,column,OCTET STRING,read-write,Description.
+ML620R-MIB,passWord,1.3.6.1.4.1.5468.510.2.6.4.1.2,column,OCTET STRING,read-write,Description.
+ML620R-MIB,confirm,1.3.6.1.4.1.5468.510.2.6.4.1.3,column,OCTET STRING,read-write,Description.
+ML620R-MIB,keepAlive,1.3.6.1.4.1.5468.510.2.6.4.1.4,column,"INTEGER { disable(0), enable(1) }",read-write,Description.
+ML620R-MIB,idleTimeout,1.3.6.1.4.1.5468.510.2.6.4.1.5,column,TimeTicks,read-write,Description.
+ML620R-MIB,pppoeApply,1.3.6.1.4.1.5468.510.2.6.4.1.6,column,"INTEGER { disable(0), apply(1) }",read-write,Description.
+ML620R-MIB,aclIndex,1.3.6.1.4.1.5468.510.2.7.1.1.1,column,INTEGER (1..32),read-only,Description.
+ML620R-MIB,ingressPort,1.3.6.1.4.1.5468.510.2.7.1.1.2,column,"INTEGER { cpu(0), port1(1), port2(2), port3(3), port4(4), gshdsl(5), e1(6), all(",read-write,Description.
+ML620R-MIB,aclAction,1.3.6.1.4.1.5468.510.2.7.1.1.3,column,"INTEGER { deny(0), peimit(1), redirect(2), remarkQueue(3), remarkPriority(4), re",read-write,Description.
+ML620R-MIB,portRedirect,1.3.6.1.4.1.5468.510.2.7.1.1.4,column,"INTEGER { cpuport(0), port1(1), port2(2), port3(3), port4(4), gshdsl(5), e1(6) }",read-write,Description.
+ML620R-MIB,frameType,1.3.6.1.4.1.5468.510.2.7.1.1.5,column,"INTEGER { etype(0), ipv4(1) }",read-write,Description.
+ML620R-MIB,aclRemarkQueueID,1.3.6.1.4.1.5468.510.2.7.1.1.6,column,INTEGER (0..5),read-write,Description.
+ML620R-MIB,aclRemarkPriority,1.3.6.1.4.1.5468.510.2.7.1.1.7,column,INTEGER (0..7),read-write,Description.
+ML620R-MIB,aclRemarkDscp,1.3.6.1.4.1.5468.510.2.7.1.1.8,column,INTEGER (0..63),read-write,Description.
+ML620R-MIB,aclOption,1.3.6.1.4.1.5468.510.2.7.1.1.9,column,"INTEGER { delete(0), edit(1), creat(2), default(4) }",read-write,Description.
+ML620R-MIB,aclStatus,1.3.6.1.4.1.5468.510.2.7.1.1.10,column,"INTEGER { disable(0), enable(1) }",read-only,Description.
+ML620R-MIB,dmacValue,1.3.6.1.4.1.5468.510.2.7.2.1.1,column,PhysAddress,read-write,Description.
+ML620R-MIB,dmacMask,1.3.6.1.4.1.5468.510.2.7.2.1.2,column,PhysAddress,read-write,Description.
+ML620R-MIB,smacValue,1.3.6.1.4.1.5468.510.2.7.2.1.3,column,PhysAddress,read-write,Description.
+ML620R-MIB,smacMask,1.3.6.1.4.1.5468.510.2.7.2.1.4,column,PhysAddress,read-write,Description.
+ML620R-MIB,etypeValue,1.3.6.1.4.1.5468.510.2.7.2.1.5,column,INTEGER (0..65535),read-write,Description.
+ML620R-MIB,etypeMask,1.3.6.1.4.1.5468.510.2.7.2.1.6,column,INTEGER (0..65535),read-write,Description.
+ML620R-MIB,taggedVlanId,1.3.6.1.4.1.5468.510.2.7.2.1.7,column,INTEGER (1..4095),read-write,Description.
+ML620R-MIB,taggedVlanMask,1.3.6.1.4.1.5468.510.2.7.2.1.8,column,INTEGER (0..4095),read-write,Description.
+ML620R-MIB,tagPriority,1.3.6.1.4.1.5468.510.2.7.2.1.9,column,INTEGER (0..7),read-write,Description.
+ML620R-MIB,tagPriorityMask,1.3.6.1.4.1.5468.510.2.7.2.1.10,column,INTEGER (0..7),read-write,Description.
+ML620R-MIB,etypeApply,1.3.6.1.4.1.5468.510.2.7.2.1.11,column,"INTEGER { disable(0), apply(1) }",read-write,Description.
+ML620R-MIB,dipFilterAddress,1.3.6.1.4.1.5468.510.2.7.3.1.1,column,IpAddress,read-write,Description.
+ML620R-MIB,dipFilterMask,1.3.6.1.4.1.5468.510.2.7.3.1.2,column,IpAddress,read-write,Description.
+ML620R-MIB,sipFilterAddress,1.3.6.1.4.1.5468.510.2.7.3.1.3,column,IpAddress,read-write,Description.
+ML620R-MIB,sipFilterMask,1.3.6.1.4.1.5468.510.2.7.3.1.4,column,IpAddress,read-write,Description.
+ML620R-MIB,dportLow,1.3.6.1.4.1.5468.510.2.7.3.1.5,column,INTEGER (0..65535),read-write,Description.
+ML620R-MIB,dportHigh,1.3.6.1.4.1.5468.510.2.7.3.1.6,column,INTEGER (0..65535),read-write,Description.
+ML620R-MIB,sportLow,1.3.6.1.4.1.5468.510.2.7.3.1.7,column,INTEGER (0..65535),read-write,Description.
+ML620R-MIB,sportHigh,1.3.6.1.4.1.5468.510.2.7.3.1.8,column,INTEGER (0..65535),read-write,Description.
+ML620R-MIB,tosDscpValue,1.3.6.1.4.1.5468.510.2.7.3.1.9,column,INTEGER (0..255),read-write,Description.
+ML620R-MIB,tosDscpMask,1.3.6.1.4.1.5468.510.2.7.3.1.10,column,INTEGER (0..255),read-write,Description.
+ML620R-MIB,ipv4Apply,1.3.6.1.4.1.5468.510.2.7.3.1.11,column,"INTEGER { disable(0), apply(1) }",read-write,Description.
+ML620R-MIB,qosIngressPort,1.3.6.1.4.1.5468.510.2.8.1.1.1.1,column,"INTEGER { cpu(1), port1(2), port2(3), port3(4), port4(5), e1(6) }",read-only,Description.
+ML620R-MIB,portDefaultPriority,1.3.6.1.4.1.5468.510.2.8.1.1.1.2,column,INTEGER (0..7),read-write,Description.
+ML620R-MIB,tagClassificationEnable,1.3.6.1.4.1.5468.510.2.8.2.1,scalar,"INTEGER { disable(0), enable(1) }",read-write,Description.
+ML620R-MIB,priorityCodePoint,1.3.6.1.4.1.5468.510.2.8.2.2.1.1,column,"INTEGER { priority0(1), priority1(2), priority2(3), priority3(4), priority4(5), ",read-only,Description.
+ML620R-MIB,qosClass,1.3.6.1.4.1.5468.510.2.8.2.2.1.2,column,INTEGER (0..3),read-write,Description.
+ML620R-MIB,dscpBasedQosIngressEnable,1.3.6.1.4.1.5468.510.2.8.3.1,scalar,"INTEGER { disable(0), enable(1) }",read-write,Description.
+ML620R-MIB,qosClassForAllDSCP,1.3.6.1.4.1.5468.510.2.8.3.2,scalar,INTEGER (0..3),read-write,Description.
+ML620R-MIB,dscpIndex,1.3.6.1.4.1.5468.510.2.8.3.3.1.1,column,INTEGER (1..64),read-only,Description.
+ML620R-MIB,dscpValue,1.3.6.1.4.1.5468.510.2.8.3.3.1.2,column,INTEGER (0..63),read-only,Description.
+ML620R-MIB,dscpQosClass,1.3.6.1.4.1.5468.510.2.8.3.3.1.3,column,INTEGER (0..3),read-write,Description.
+ML620R-MIB,schedulerMode,1.3.6.1.4.1.5468.510.2.8.4.1,scalar,"INTEGER { strict(0), wrr(1) }",read-write,Description.
+ML620R-MIB,queue,1.3.6.1.4.1.5468.510.2.8.4.2.1.1,column,INTEGER (1..6),read-only,Description.
+ML620R-MIB,queueLimitMode,1.3.6.1.4.1.5468.510.2.8.4.2.1.2,column,"INTEGER { disable(0), enable(1) }",read-write,Description.
+ML620R-MIB,queueSpeed,1.3.6.1.4.1.5468.510.2.8.4.2.1.3,column,INTEGER (0..9999),read-write,Description.
+ML620R-MIB,queueSpeedUnit,1.3.6.1.4.1.5468.510.2.8.4.2.1.4,column,"INTEGER { kbps(0), mbps(1) }",read-write,Description.
+ML620R-MIB,queueWeight,1.3.6.1.4.1.5468.510.2.8.4.2.1.5,column,INTEGER (0..31),read-write,Description.
+ML620R-MIB,policerIndex,1.3.6.1.4.1.5468.510.2.8.5.1.1.1,column,Integer32 (1..4),read-only,Description.
+ML620R-MIB,policerMode,1.3.6.1.4.1.5468.510.2.8.5.1.1.2,column,"INTEGER { disable(0), enable(1) }",read-write,Description.
+ML620R-MIB,policerRate,1.3.6.1.4.1.5468.510.2.8.5.1.1.3,column,Integer32,read-write,Description.
+ML620R-MIB,policerUnit,1.3.6.1.4.1.5468.510.2.8.5.1.1.4,column,"INTEGER { kbps(0), mbps(1) }",read-write,Description.
+ML620R-MIB,actiiveVirtualIndex,1.3.6.1.4.1.5468.510.2.9.1.1.1,column,Integer32 (1..8),read-only,Description.
+ML620R-MIB,virtualServersDescription,1.3.6.1.4.1.5468.510.2.9.1.1.2,column,OCTET STRING,read-write,Description.
+ML620R-MIB,virtualServersStartPort,1.3.6.1.4.1.5468.510.2.9.1.1.3,column,Integer32,read-write,Description.
+ML620R-MIB,virtualServersEndPort,1.3.6.1.4.1.5468.510.2.9.1.1.4,column,Integer32,read-write,Description.
+ML620R-MIB,virtualServersLocalIP,1.3.6.1.4.1.5468.510.2.9.1.1.5,column,IpAddress,read-write,Description.
+ML620R-MIB,virtualServersProtocol,1.3.6.1.4.1.5468.510.2.9.1.1.6,column,"INTEGER { all(0), tcp(1), udp(2) }",read-write,Description.
+ML620R-MIB,virtualServersInternalInterface,1.3.6.1.4.1.5468.510.2.9.1.1.7,column,OCTET STRING,read-write,Description.
+ML620R-MIB,virtualServersExternalInterface,1.3.6.1.4.1.5468.510.2.9.1.1.8,column,OCTET STRING,read-write,Description.
+ML620R-MIB,virtualServersAction,1.3.6.1.4.1.5468.510.2.9.1.1.9,column,"INTEGER { add(0), modify(1), delete(2), default(3) }",read-write,Description.
+ML620R-MIB,virtualServersStatus,1.3.6.1.4.1.5468.510.2.9.1.1.10,column,"INTEGER { enable(0), disable(1) }",read-only,Description.
+ML620R-MIB,upnpindex,1.3.6.1.4.1.5468.510.2.9.2.1.1.1,column,Integer32 (1),read-only,Description.
+ML620R-MIB,uPnPService,1.3.6.1.4.1.5468.510.2.9.2.1.1.2,column,"INTEGER { disable(0), enable(1) }",read-write,Description.
+ML620R-MIB,internalInterface,1.3.6.1.4.1.5468.510.2.9.2.1.1.3,column,OCTET STRING,read-write,Description.
+ML620R-MIB,externalInterface,1.3.6.1.4.1.5468.510.2.9.2.1.1.4,column,OCTET STRING,read-write,Description.
+ML620R-MIB,uPnPConfigurationApply,1.3.6.1.4.1.5468.510.2.9.2.1.1.5,column,"INTEGER { default(0), apply(1) }",read-write,Description.
+ML620R-MIB,upnpsIndex,1.3.6.1.4.1.5468.510.2.9.2.2.1.1,column,Integer32 (1..8),read-only,Description.
+ML620R-MIB,uPnPDescription,1.3.6.1.4.1.5468.510.2.9.2.2.1.2,column,OCTET STRING,read-only,Description.
+ML620R-MIB,uPnPProtocol,1.3.6.1.4.1.5468.510.2.9.2.2.1.3,column,OCTET STRING,read-only,Description.
+ML620R-MIB,uPnPExternPort,1.3.6.1.4.1.5468.510.2.9.2.2.1.4,column,OCTET STRING,read-only,Description.
+ML620R-MIB,uPnPLocalIP,1.3.6.1.4.1.5468.510.2.9.2.2.1.5,column,OCTET STRING,read-only,Description.
+ML620R-MIB,uPnPLocalPort,1.3.6.1.4.1.5468.510.2.9.2.2.1.6,column,OCTET STRING,read-only,Description.
+ML620R-MIB,uPnPStatus,1.3.6.1.4.1.5468.510.2.9.2.2.1.7,column,Integer32,read-only,Description.
+ML620R-MIB,interface,1.3.6.1.4.1.5468.510.2.10.1.1,scalar,OCTET STRING,read-write,Description.
+ML620R-MIB,defaultSetting,1.3.6.1.4.1.5468.510.2.10.1.2,scalar,"INTEGER { drop(0), accept(1) }",read-write,Description.
+ML620R-MIB,ipFilterIndex,1.3.6.1.4.1.5468.510.2.10.2.1.1,column,Integer32 (1..8),read-write,Description.
+ML620R-MIB,ipFilterSourceIPStart,1.3.6.1.4.1.5468.510.2.10.2.1.2,column,IpAddress,read-write,Description.
+ML620R-MIB,ipFilterSourceIPEnd,1.3.6.1.4.1.5468.510.2.10.2.1.3,column,IpAddress,read-write,Description.
+ML620R-MIB,ipFilterSourcePortStart,1.3.6.1.4.1.5468.510.2.10.2.1.4,column,Integer32 (0..65535),read-write,Description.
+ML620R-MIB,ipFilterSourcePortEnd,1.3.6.1.4.1.5468.510.2.10.2.1.5,column,Integer32,read-write,Description.
+ML620R-MIB,ipFilterDestinationIPStart,1.3.6.1.4.1.5468.510.2.10.2.1.6,column,IpAddress,read-write,Description.
+ML620R-MIB,ipFilterDestinationIPEnd,1.3.6.1.4.1.5468.510.2.10.2.1.7,column,IpAddress,read-write,Description.
+ML620R-MIB,ipFilterDestinationPortStart,1.3.6.1.4.1.5468.510.2.10.2.1.8,column,Integer32 (0..65535),read-write,Description.
+ML620R-MIB,ipFilterDestinationPortEnd,1.3.6.1.4.1.5468.510.2.10.2.1.9,column,Integer32,read-write,Description.
+ML620R-MIB,ipFilterProtocol,1.3.6.1.4.1.5468.510.2.10.2.1.10,column,"INTEGER { all(0), tcp(1), udp(2) }",read-write,Description.
+ML620R-MIB,ipFilter,1.3.6.1.4.1.5468.510.2.10.2.1.11,column,"INTEGER { drop(0), accept(1) }",read-write,Description.
+ML620R-MIB,ipFilterAction,1.3.6.1.4.1.5468.510.2.10.2.1.12,column,"INTEGER { add(0), delete(1), default(2) }",read-write,Description.
+ML620R-MIB,macFilterIndex,1.3.6.1.4.1.5468.510.2.10.3.1.1,column,Integer32 (1..8),read-write,Description.
+ML620R-MIB,macFilterAddress,1.3.6.1.4.1.5468.510.2.10.3.1.2,column,PhysAddress,read-write,Description.
+ML620R-MIB,macFilter,1.3.6.1.4.1.5468.510.2.10.3.1.3,column,"INTEGER { drop(0), accept(1) }",read-write,Description.
+ML620R-MIB,macFilterAction,1.3.6.1.4.1.5468.510.2.10.3.1.4,column,"INTEGER { add(0), delete(1), default(2) }",read-write,Description.
+ML620R-MIB,domainFilterIndex,1.3.6.1.4.1.5468.510.2.10.4.1.1,column,Integer32 (1..8),read-write,Description.
+ML620R-MIB,domainName,1.3.6.1.4.1.5468.510.2.10.4.1.2,column,OCTET STRING,read-write,Description.
+ML620R-MIB,domainFilter,1.3.6.1.4.1.5468.510.2.10.4.1.3,column,"INTEGER { drop(0), accept(1) }",read-write,Description.
+ML620R-MIB,domainFilterAction,1.3.6.1.4.1.5468.510.2.10.4.1.4,column,"INTEGER { add(0), delete(1), default(2) }",read-write,Description.
+ML620R-MIB,atmCPCSProtocol,1.3.6.1.4.1.5468.510.2.11.1.1,scalar,"INTEGER { llc(0), vcMux(1) }",read-write,Description.
+ML620R-MIB,atmFilterMode,1.3.6.1.4.1.5468.510.2.11.1.2,scalar,"INTEGER { destinationMacAddress(0), vlanID(1) }",read-write,Description.
+ML620R-MIB,atmDefaultAction,1.3.6.1.4.1.5468.510.2.11.1.3,scalar,"INTEGER { discard(0), forward(1) }",read-write,Description.
+ML620R-MIB,atmIndex,1.3.6.1.4.1.5468.510.2.11.2.1.1,column,INTEGER (1..8),read-only,Description.
+ML620R-MIB,vid,1.3.6.1.4.1.5468.510.2.11.2.1.2,column,INTEGER (1..4095),read-write,Description.
+ML620R-MIB,vpi,1.3.6.1.4.1.5468.510.2.11.2.1.3,column,INTEGER (0..255),read-write,Description.
+ML620R-MIB,vci,1.3.6.1.4.1.5468.510.2.11.2.1.4,column,INTEGER (32..2000),read-write,Description.
+ML620R-MIB,staticIndex,1.3.6.1.4.1.5468.510.2.12.1.1,column,INTEGER (1..8),read-only,Define xxth VC.
+ML620R-MIB,staticNetwork,1.3.6.1.4.1.5468.510.2.12.1.2,column,IpAddress,read-write,WAN port ISP Name.
+ML620R-MIB,staticSubnetmask,1.3.6.1.4.1.5468.510.2.12.1.3,column,IpAddress,read-write,Range is from 0 to 8
+ML620R-MIB,staticGateWay,1.3.6.1.4.1.5468.510.2.12.1.4,column,IpAddress,read-write,Range is from 32 to 4096
+ML620R-MIB,staticActive,1.3.6.1.4.1.5468.510.2.12.1.5,column,"INTEGER { delete(0), add(1), default(2) }",read-write,Define xxth VC.
+ML620R-MIB,staticRoutingStatus,1.3.6.1.4.1.5468.510.2.12.1.6,column,"INTEGER { disable(0), enable(1) }",read-write,Description.
+ML620R-MIB,snmpconf,1.3.6.1.4.1.5468.510.2.13.1.1.1,scalar,"INTEGER { disable(0), enable(1) }",read-write,Description.
+ML620R-MIB,readOnlyCommunity,1.3.6.1.4.1.5468.510.2.13.1.1.2,scalar,OCTET STRING,read-write,Description.
+ML620R-MIB,readWriteCommunity,1.3.6.1.4.1.5468.510.2.13.1.1.3,scalar,OCTET STRING,read-write,Description.
+ML620R-MIB,trapCommunity,1.3.6.1.4.1.5468.510.2.13.1.1.4,scalar,OCTET STRING,read-write,Description.
+ML620R-MIB,username,1.3.6.1.4.1.5468.510.2.13.1.1.5,scalar,OCTET STRING,read-write,Description.
+ML620R-MIB,passwordMD5,1.3.6.1.4.1.5468.510.2.13.1.1.6,scalar,OCTET STRING,read-write,Description.
+ML620R-MIB,passwordDES,1.3.6.1.4.1.5468.510.2.13.1.1.7,scalar,OCTET STRING,read-write,Description.
+ML620R-MIB,trapIndex,1.3.6.1.4.1.5468.510.2.13.1.2.1.1,column,INTEGER (1..4),read-only,Description.
+ML620R-MIB,descrIption,1.3.6.1.4.1.5468.510.2.13.1.2.1.2,column,OCTET STRING,read-write,Description.
+ML620R-MIB,version,1.3.6.1.4.1.5468.510.2.13.1.2.1.3,column,"INTEGER { snmpV1(0), snmpV2csnmpV3(1) }",read-write,SNMP version.
+ML620R-MIB,ipv4RemoteTrapSer,1.3.6.1.4.1.5468.510.2.13.1.2.1.4,column,IpAddress,read-write,Set TRAP server IP address.
+ML620R-MIB,trapOption,1.3.6.1.4.1.5468.510.2.13.1.2.1.5,column,"INTEGER { delete(0), creat(1), default(2) }",read-write,Delete or create TRAP server.
+ML620R-MIB,trapStatus,1.3.6.1.4.1.5468.510.2.13.1.2.1.6,column,"INTEGER { disable(0), enable(1) }",read-only,TRAP status.
+ML620R-MIB,trapOccurredTimestamp,1.3.6.1.4.1.5468.510.3.7,scalar,OCTET STRING,read-only,trap notification when system is synchronous.
+ML620R-MIB,dslTrapIndex,1.3.6.1.4.1.5468.510.3.8,scalar,Integer32 (1..4),read-write,Description.
+ML620R-MIB,dslTrapStatus,1.3.6.1.4.1.5468.510.3.9,scalar,"INTEGER { down(0), up(1) }",read-write,Description.
+ML620R-MIB,rebootDevice,1.3.6.1.4.1.5468.510.4.1,scalar,"INTEGER { default(0), reboot(1) }",read-write,Description.
+ML620R-MIB,saveConfiguration,1.3.6.1.4.1.5468.510.4.2,scalar,"INTEGER { default(0), save(1) }",read-write,Description.
+ML620R-MIB,factoryDefault,1.3.6.1.4.1.5468.510.4.3,scalar,"INTEGER { default(0), load(1) }",read-write,Description.
+ML620R-MIB,ftpServerIP,1.3.6.1.4.1.5468.510.4.4.1,scalar,IpAddress,read-write,Description.
+ML620R-MIB,ftpUser,1.3.6.1.4.1.5468.510.4.4.2,scalar,OCTET STRING,read-write,Description.
+ML620R-MIB,ftpPassword,1.3.6.1.4.1.5468.510.4.4.3,scalar,OCTET STRING,read-write,Description.
+ML620R-MIB,pcConfigrationFile,1.3.6.1.4.1.5468.510.4.4.4.1,scalar,OCTET STRING,read-write,Description.
+ML620R-MIB,loadConfigurationFile,1.3.6.1.4.1.5468.510.4.4.4.2,scalar,"INTEGER { default(0), upload(1), download(2) }",read-write,Description.
+ML620R-MIB,updatestatus,1.3.6.1.4.1.5468.510.4.4.5.1,scalar,"INTEGER { default(0), success(1), upadting(2) }",read-only,Description.
+ML620R-MIB,updatefirmname,1.3.6.1.4.1.5468.510.4.4.5.2,scalar,OCTET STRING,read-write,Description.
+ML620R-MIB,updatefirmware,1.3.6.1.4.1.5468.510.4.4.5.3,scalar,"INTEGER { default(0), update(1) }",read-write,Description.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslSpanConfNumRepeaters,1.3.6.1.2.1.10.48.1.1.1.1,column,Unsigned32(0..8),read-write,This object provisions the number of repeaters/regenerators in this HDSL2/SHDSL span.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslSpanConfProfile,1.3.6.1.2.1.10.48.1.1.1.2,column,SnmpAdminString (SIZE(1..32)),read-write,"This object is a pointer to a span configuration profile in the hdsl2ShdslSpanConfProfileTable, which applies to this span. The value of this object i"
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslSpanConfAlarmProfile,1.3.6.1.2.1.10.48.1.1.1.3,column,SnmpAdminString (SIZE(1..32)),read-write,This object is a pointer to an alarm configuration profile in the hdsl2ShdslEndpointAlarmConfProfileTable. The value of this object is the index of th
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslStatusNumAvailRepeaters,1.3.6.1.2.1.10.48.1.2.1.1,column,Unsigned32(0..8),read-only,Contains the actual number of repeaters/regenerators discovered in this HDSL2/SHDSL span.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslStatusMaxAttainableLineRate,1.3.6.1.2.1.10.48.1.2.1.2,column,Unsigned32(0..4294967295),read-only,Contains the maximum attainable line rate in this HDSL2/SHDSL span. This object provides the maximum rate the line is capable of achieving. This is ba
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslStatusActualLineRate,1.3.6.1.2.1.10.48.1.2.1.3,column,Unsigned32(0..4294967295),read-only,Contains the actual line rate in this HDSL2/SHDSL span. This SHOULD equal ifSpeed. This rate includes payload (user data) and any applicable framing o
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslStatusTransmissionModeCurrent,1.3.6.1.2.1.10.48.1.2.1.4,column,Hdsl2ShdslTransmissionModeType,read-only,Contains the current Power Spectral Density (PSD) regional setting of the HDSL2/SHDSL span.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslStatusMaxAttainablePayloadRate,1.3.6.1.2.1.10.48.1.2.1.5,column,Unsigned32(0..4294967295),read-only,Contains the maximum attainable payload (user data) line rate in this HDSL2/SHDSL span. This object provides the maximum rate the line is capable of a
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslStatusActualPayloadRate,1.3.6.1.2.1.10.48.1.2.1.6,column,Unsigned32(0..4294967295),read-only,Contains the actual line rate in this HDSL2/SHDSL span. Any framing overhead is not included.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslInvIndex,1.3.6.1.2.1.10.48.1.3.1.1,column,Hdsl2ShdslUnitId,not-accessible,Each entry in this table corresponds to a physical element in an HDSL2/SHDSL span. It is based on the EOC unit addressing scheme with reference to the
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslInvVendorID,1.3.6.1.2.1.10.48.1.3.1.2,column,OCTET STRING(SIZE(8)),read-only,Vendor ID as reported in an Inventory Response message.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslInvVendorModelNumber,1.3.6.1.2.1.10.48.1.3.1.3,column,OCTET STRING(SIZE(12)),read-only,Vendor model number as reported in an Inventory Response message.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslInvVendorSerialNumber,1.3.6.1.2.1.10.48.1.3.1.4,column,OCTET STRING(SIZE(12)),read-only,Vendor serial number as reported in an Inventory Response message.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslInvVendorEOCSoftwareVersion,1.3.6.1.2.1.10.48.1.3.1.5,column,Integer32,read-only,Vendor EOC version as reported in a Discovery Response message.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslInvStandardVersion,1.3.6.1.2.1.10.48.1.3.1.6,column,Integer32,read-only,"Version of the HDSL2/SHDSL standard implemented, as reported in an Inventory Response message."
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslInvVendorListNumber,1.3.6.1.2.1.10.48.1.3.1.7,column,OCTET STRING(SIZE(3)),read-only,Vendor list number as reported in an Inventory Response message.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslInvVendorIssueNumber,1.3.6.1.2.1.10.48.1.3.1.8,column,OCTET STRING(SIZE(2)),read-only,Vendor issue number as reported in an Inventory Response message.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslInvVendorSoftwareVersion,1.3.6.1.2.1.10.48.1.3.1.9,column,OCTET STRING(SIZE(6)),read-only,Vendor software version as reported in an Inventory Response message.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslInvEquipmentCode,1.3.6.1.2.1.10.48.1.3.1.10,column,OCTET STRING(SIZE(10)),read-only,"Equipment code conforming to ANSI T1.213, Coded Identification of Equipment Entities."
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslInvVendorOther,1.3.6.1.2.1.10.48.1.3.1.11,column,OCTET STRING(SIZE(12)),read-only,Other vendor information as reported in an Inventory Response message.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslInvTransmissionModeCapability,1.3.6.1.2.1.10.48.1.3.1.12,column,Hdsl2ShdslTransmissionModeType,read-only,Contains the transmission mode capability of the SHDSL unit.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointSide,1.3.6.1.2.1.10.48.1.4.1.1,column,Hdsl2ShdslUnitSide,not-accessible,The side of the unit associated with this segment endpoint -- Network/Customer side -- as per the Hdsl2ShdslUnitSide textual convention.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointWirePair,1.3.6.1.2.1.10.48.1.4.1.2,column,Hdsl2ShdslWirePair,not-accessible,The wire pair of the modem associated with this segment endpoint as per the Hdsl2ShdslWirePair textual convention.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointAlarmConfProfile,1.3.6.1.2.1.10.48.1.4.1.3,column,SnmpAdminString (SIZE(0..32)),read-write,This object configures the alarm threshold values to be used for this segment endpoint. The values are obtained from the alarm configuration profile r
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointCurrAtn,1.3.6.1.2.1.10.48.1.5.1.1,column,Integer32(-127..128),read-only,The current loop attenuation for this endpoint as reported in a Network or Customer Side Performance Status message.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointCurrSnrMgn,1.3.6.1.2.1.10.48.1.5.1.2,column,Integer32(-127..128),read-only,The current SNR margin for this endpoint as reported in a Status Response/SNR message.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointCurrStatus,1.3.6.1.2.1.10.48.1.5.1.3,column,"BITS { noDefect(0), powerBackoff(1), deviceFault(2), dcContinuityFault(3), snrMa",read-only,Contains the current state of the endpoint. This is a bit-map of possible conditions. The various bit positions are as follows: noDefect There are no 
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointES,1.3.6.1.2.1.10.48.1.5.1.4,column,Counter32,read-only,Count of Errored Seconds (ES) on this endpoint since the xU was last restarted.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointSES,1.3.6.1.2.1.10.48.1.5.1.5,column,Counter32,read-only,Count of Severely Errored Seconds (SES) on this endpoint since the xU was last restarted.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointCRCanomalies,1.3.6.1.2.1.10.48.1.5.1.6,column,Counter32,read-only,Count of CRC anomalies on this endpoint since the xU was last restarted.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointLOSWS,1.3.6.1.2.1.10.48.1.5.1.7,column,Counter32,read-only,Count of Loss of Sync Word (LOSW) Seconds on this endpoint since the xU was last restarted.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointUAS,1.3.6.1.2.1.10.48.1.5.1.8,column,Counter32,read-only,Count of Unavailable Seconds (UAS) on this endpoint since the xU was last restarted.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointCurr15MinTimeElapsed,1.3.6.1.2.1.10.48.1.5.1.9,column,Hdsl2ShdslPerfTimeElapsed,read-only,Total elapsed seconds in the current 15-minute interval.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointCurr15MinES,1.3.6.1.2.1.10.48.1.5.1.10,column,PerfCurrentCount,read-only,Count of Errored Seconds (ES) in the current 15-minute interval.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointCurr15MinSES,1.3.6.1.2.1.10.48.1.5.1.11,column,PerfCurrentCount,read-only,Count of Severely Errored Seconds (SES) in the current 15-minute interval.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointCurr15MinCRCanomalies,1.3.6.1.2.1.10.48.1.5.1.12,column,PerfCurrentCount,read-only,Count of CRC anomalies in the current 15-minute interval.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointCurr15MinLOSWS,1.3.6.1.2.1.10.48.1.5.1.13,column,PerfCurrentCount,read-only,Count of Loss of Sync Word (LOSW) Seconds in the current 15-minute interval.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointCurr15MinUAS,1.3.6.1.2.1.10.48.1.5.1.14,column,PerfCurrentCount,read-only,Count of Unavailable Seconds (UAS) in the current 15-minute interval.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointCurr1DayTimeElapsed,1.3.6.1.2.1.10.48.1.5.1.15,column,Hdsl2ShdslPerfTimeElapsed,read-only,Number of seconds that have elapsed since the beginning of the current 1-day interval.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointCurr1DayES,1.3.6.1.2.1.10.48.1.5.1.16,column,Hdsl2ShdslPerfCurrDayCount,read-only,Count of Errored Seconds (ES) during the current day as measured by hdsl2ShdslEndpointCurr1DayTimeElapsed.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointCurr1DaySES,1.3.6.1.2.1.10.48.1.5.1.17,column,Hdsl2ShdslPerfCurrDayCount,read-only,Count of Severely Errored Seconds (SES) during the current day as measured by hdsl2ShdslEndpointCurr1DayTimeElapsed.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointCurr1DayCRCanomalies,1.3.6.1.2.1.10.48.1.5.1.18,column,Hdsl2ShdslPerfCurrDayCount,read-only,Count of CRC anomalies during the current day as measured by hdsl2ShdslEndpointCurr1DayTimeElapsed.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointCurr1DayLOSWS,1.3.6.1.2.1.10.48.1.5.1.19,column,Hdsl2ShdslPerfCurrDayCount,read-only,Count of Loss of Sync Word (LOSW) Seconds during the current day as measured by hdsl2ShdslEndpointCurr1DayTimeElapsed.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointCurr1DayUAS,1.3.6.1.2.1.10.48.1.5.1.20,column,Hdsl2ShdslPerfCurrDayCount,read-only,Count of Unavailable Seconds (UAS) during the current day as measured by hdsl2ShdslEndpointCurr1DayTimeElapsed.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointCurrTipRingReversal,1.3.6.1.2.1.10.48.1.5.1.21,column,"INTEGER { normal(1), reversed(2) }",read-only,This object indicates the state of the tip/ring for the wire pair.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointCurrActivationState,1.3.6.1.2.1.10.48.1.5.1.22,column,"INTEGER { preActivation(1), -- PreTrain activation(2), -- Training data(3) -- Tr",read-only,This object indicates the activation or training state of the wire pair.
+HDSL2-SHDSL-LINE-MIB,hdsl2Shdsl15MinIntervalNumber,1.3.6.1.2.1.10.48.1.6.1.1,column,Unsigned32(1..96),not-accessible,Performance Data Interval number. Interval 1 is the most recent previous interval; interval 96 is 24 hours ago. Intervals 2..96 are optional.
+HDSL2-SHDSL-LINE-MIB,hdsl2Shdsl15MinIntervalES,1.3.6.1.2.1.10.48.1.6.1.2,column,PerfIntervalCount,read-only,Count of Errored Seconds (ES) during the interval.
+HDSL2-SHDSL-LINE-MIB,hdsl2Shdsl15MinIntervalSES,1.3.6.1.2.1.10.48.1.6.1.3,column,PerfIntervalCount,read-only,Count of Severely Errored Seconds (SES) during the interval.
+HDSL2-SHDSL-LINE-MIB,hdsl2Shdsl15MinIntervalCRCanomalies,1.3.6.1.2.1.10.48.1.6.1.4,column,PerfIntervalCount,read-only,Count of CRC anomalies during the interval.
+HDSL2-SHDSL-LINE-MIB,hdsl2Shdsl15MinIntervalLOSWS,1.3.6.1.2.1.10.48.1.6.1.5,column,PerfIntervalCount,read-only,Count of Loss of Sync Word (LOSW) Seconds during the interval.
+HDSL2-SHDSL-LINE-MIB,hdsl2Shdsl15MinIntervalUAS,1.3.6.1.2.1.10.48.1.6.1.6,column,PerfIntervalCount,read-only,Count of Unavailable Seconds (UAS) during the interval.
+HDSL2-SHDSL-LINE-MIB,hdsl2Shdsl1DayIntervalNumber,1.3.6.1.2.1.10.48.1.7.1.1,column,Unsigned32(1..30),not-accessible,History Data Interval number. Interval 1 is the most recent previous day; interval 30 is 30 days ago. Intervals 2..30 are optional.
+HDSL2-SHDSL-LINE-MIB,hdsl2Shdsl1DayIntervalMoniSecs,1.3.6.1.2.1.10.48.1.7.1.2,column,Hdsl2ShdslPerfTimeElapsed,read-only,The amount of time in the 1-day interval over which the performance monitoring information is actually counted. This value will be the same as the int
+HDSL2-SHDSL-LINE-MIB,hdsl2Shdsl1DayIntervalES,1.3.6.1.2.1.10.48.1.7.1.3,column,Hdsl2Shdsl1DayIntervalCount,read-only,Count of Errored Seconds (ES) during the 1-day interval as measured by hdsl2Shdsl1DayIntervalMoniSecs.
+HDSL2-SHDSL-LINE-MIB,hdsl2Shdsl1DayIntervalSES,1.3.6.1.2.1.10.48.1.7.1.4,column,Hdsl2Shdsl1DayIntervalCount,read-only,Count of Severely Errored Seconds (SES) during the 1-day interval as measured by hdsl2Shdsl1DayIntervalMoniSecs.
+HDSL2-SHDSL-LINE-MIB,hdsl2Shdsl1DayIntervalCRCanomalies,1.3.6.1.2.1.10.48.1.7.1.5,column,Hdsl2Shdsl1DayIntervalCount,read-only,Count of CRC anomalies during the 1-day interval as measured by hdsl2Shdsl1DayIntervalMoniSecs.
+HDSL2-SHDSL-LINE-MIB,hdsl2Shdsl1DayIntervalLOSWS,1.3.6.1.2.1.10.48.1.7.1.6,column,Hdsl2Shdsl1DayIntervalCount,read-only,Count of Loss of Sync Word (LOSW) Seconds during the 1-day interval as measured by hdsl2Shdsl1DayIntervalMoniSecs.
+HDSL2-SHDSL-LINE-MIB,hdsl2Shdsl1DayIntervalUAS,1.3.6.1.2.1.10.48.1.7.1.7,column,Hdsl2Shdsl1DayIntervalCount,read-only,Count of Unavailable Seconds (UAS) during the 1-day interval as measured by hdsl2Shdsl1DayIntervalMoniSecs.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslMaintLoopbackConfig,1.3.6.1.2.1.10.48.1.8.1.1,column,"INTEGER { noLoopback(1), normalLoopback(2), specialLoopback(3) }",read-write,This object controls configuration of loopbacks for the associated segment endpoint. The status of the loopback is obtained via the hdsl2ShdslEndpoint
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslMaintTipRingReversal,1.3.6.1.2.1.10.48.1.8.1.2,column,"INTEGER { normal(1), reversed(2) }",read-only,This object indicates the state of the tip/ring pair at the associated segment endpoint.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslMaintPowerBackOff,1.3.6.1.2.1.10.48.1.8.1.3,column,"INTEGER { default(1), enhanced(2) }",read-write,This object configures the receiver at the associated segment endpoint to operate in default or enhanced power backoff mode.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslMaintSoftRestart,1.3.6.1.2.1.10.48.1.8.1.4,column,"INTEGER { ready(1), restart(2) }",read-write,This object enables the manager to trigger a soft restart of the modem at the associated segment endpoint. The manager may only set this object to the
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslMaintLoopbackTimeout,1.3.6.1.2.1.10.48.1.9.1.1,column,Integer32(0..4095),read-write,This object configures the timeout value for loopbacks initiated at segments endpoints contained in the associated unit. A value of 0 disables the tim
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslMaintUnitPowerSource,1.3.6.1.2.1.10.48.1.9.1.2,column,"INTEGER { local(1), span(2) }",read-only,This object indicates the DC power source being used by the associated unit.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslSpanConfProfileName,1.3.6.1.2.1.10.48.1.10.1.1,column,SnmpAdminString (SIZE(1..32)),not-accessible,This object is the unique index associated with this profile. Entries in this table are referenced via the object hdsl2ShdslSpanConfProfile in Hdsl2Sh
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslSpanConfWireInterface,1.3.6.1.2.1.10.48.1.10.1.2,column,"INTEGER { twoWire(1), fourWire(2), sixWire(3), eightWire(4) }",read-create,"This object configures the two-wire or optional four-wire, six-wire, or eight-wire operation for SHDSL lines."
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslSpanConfMinLineRate,1.3.6.1.2.1.10.48.1.10.1.3,column,Unsigned32(0..4294967295),read-create,This object configures the minimum transmission rate for the associated SHDSL Line in bits-per-second (bps) and includes both payload (user data) and 
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslSpanConfMaxLineRate,1.3.6.1.2.1.10.48.1.10.1.4,column,Unsigned32(0..4294967295),read-create,This object configures the maximum transmission rate for the associated SHDSL Line in bits-per-second (bps) and includes both payload (user data) and 
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslSpanConfPSD,1.3.6.1.2.1.10.48.1.10.1.5,column,"INTEGER { symmetric(1), asymmetric(2) }",read-create,This object configures use of symmetric/asymmetric PSD (Power Spectral Density) Mask for the associated SHDSL Line. Support for symmetric PSD is manda
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslSpanConfTransmissionMode,1.3.6.1.2.1.10.48.1.10.1.6,column,Hdsl2ShdslTransmissionModeType,read-create,This object specifies the regional setting for the SHDSL line.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslSpanConfRemoteEnabled,1.3.6.1.2.1.10.48.1.10.1.7,column,"INTEGER { enabled(1), disabled(2) }",read-create,This object enables/disables support for remote management of the units in an SHDSL line from the STU-R via the EOC.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslSpanConfPowerFeeding,1.3.6.1.2.1.10.48.1.10.1.8,column,"INTEGER { noPower(1), powerFeed(2), wettingCurrent(3) }",read-create,This object enables/disables support for optional power feeding in an SHDSL line.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslSpanConfCurrCondTargetMarginDown,1.3.6.1.2.1.10.48.1.10.1.9,column,Integer32(-10..21),read-create,This object specifies the downstream current condition target SNR margin for an SHDSL line. The SNR margin is the difference between the desired SNR a
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslSpanConfWorstCaseTargetMarginDown,1.3.6.1.2.1.10.48.1.10.1.10,column,Integer32(-10..21),read-create,This object specifies the downstream worst-case target SNR margin for an SHDSL line. The SNR margin is the difference between the desired SNR and the 
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslSpanConfCurrCondTargetMarginUp,1.3.6.1.2.1.10.48.1.10.1.11,column,Integer32(-10..21),read-create,This object specifies the upstream current-condition target SNR margin for an SHDSL line. The SNR margin is the difference between the desired SNR and
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslSpanConfWorstCaseTargetMarginUp,1.3.6.1.2.1.10.48.1.10.1.12,column,Integer32(-10..21),read-create,This object specifies the upstream worst-case target SNR margin for an SHDSL line. The SNR margin is the difference between the desired SNR and the ac
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslSpanConfUsedTargetMargins,1.3.6.1.2.1.10.48.1.10.1.13,column,"BITS { currCondDown(0), worstCaseDown(1), currCondUp(2), worstCaseUp(3) }",read-create,Indicates whether a target SNR margin is enabled or disabled. This is a bit-map of possible settings. The various bit positions are as follows: currCo
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslSpanConfReferenceClock,1.3.6.1.2.1.10.48.1.10.1.14,column,Hdsl2ShdslClockReferenceType,read-create,This object configures the clock reference for the STU-C in an SHDSL Line.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslSpanConfLineProbeEnable,1.3.6.1.2.1.10.48.1.10.1.15,column,"INTEGER { disable(1), enable(2) }",read-create,"This object enables/disables support for Line Probe of the units in an SHDSL line. When Line Probe is enabled, the system performs Line Probing to fin"
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslSpanConfProfileRowStatus,1.3.6.1.2.1.10.48.1.10.1.16,column,RowStatus,read-create,This object controls creation/deletion of the associated entry in this table per the semantics of RowStatus. If an active entry is referenced in hdsl2
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointAlarmConfProfileName,1.3.6.1.2.1.10.48.1.11.1.1,column,SnmpAdminString (SIZE(1..32)),not-accessible,This object is the unique index associated with this profile.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointThreshLoopAttenuation,1.3.6.1.2.1.10.48.1.11.1.2,column,Integer32(-127..128),read-create,"This object configures the loop attenuation alarm threshold. When the current value of hdsl2ShdslEndpointCurrAtn reaches or exceeds this threshold, an"
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointThreshSNRMargin,1.3.6.1.2.1.10.48.1.11.1.3,column,Integer32(-127..128),read-create,"This object configures the SNR margin alarm threshold. When the current value of hdsl2ShdslEndpointCurrSnrMgn reaches or drops below this threshold, a"
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointThreshES,1.3.6.1.2.1.10.48.1.11.1.4,column,Hdsl2ShdslPerfIntervalThreshold,read-create,This object configures the threshold for the number of Errored Seconds (ES) within any given 15-minute performance data collection interval. If the va
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointThreshSES,1.3.6.1.2.1.10.48.1.11.1.5,column,Hdsl2ShdslPerfIntervalThreshold,read-create,This object configures the threshold for the number of Severely Errored Seconds (SES) within any given 15-minute performance data collection interval.
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointThreshCRCanomalies,1.3.6.1.2.1.10.48.1.11.1.6,column,Integer32,read-create,This object configures the threshold for the number of CRC anomalies within any given 15-minute performance data collection interval. If the value of 
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointThreshLOSWS,1.3.6.1.2.1.10.48.1.11.1.7,column,Hdsl2ShdslPerfIntervalThreshold,read-create,This object configures the threshold for the number of Loss of Sync Word (LOSW) Seconds within any given 15-minute performance data collection interva
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointThreshUAS,1.3.6.1.2.1.10.48.1.11.1.8,column,Hdsl2ShdslPerfIntervalThreshold,read-create,This object configures the threshold for the number of Unavailable Seconds (UAS) within any given 15-minute performance data collection interval. If t
+HDSL2-SHDSL-LINE-MIB,hdsl2ShdslEndpointAlarmConfProfileRowStatus,1.3.6.1.2.1.10.48.1.11.1.9,column,RowStatus,read-create,This object controls creation/deletion of the associated entry in this table as per the semantics of RowStatus. If an active entry is referenced in ei
+EFM-CU-MIB,efmCuPAFAdminState,1.3.6.1.2.1.167.1.1.1.1.1,column,"INTEGER { enabled(1), disabled(2) }",read-write,"Administrative (desired) state of the PAF of the EFMCu port (PCS). When 'disabled', PME Aggregation will not be performed by the PCS. No more than a s"
+EFM-CU-MIB,efmCuPAFDiscoveryCode,1.3.6.1.2.1.167.1.1.1.1.2,column,PhysAddress,read-write,"PAF Discovery Code of the EFMCu port (PCS). A unique 6 Byte long code used by the Discovery function, when PAF is supported. PCS ports incapable of su"
+EFM-CU-MIB,efmCuAdminProfile,1.3.6.1.2.1.167.1.1.1.1.3,column,ProfileIndexList,read-write,"Desired configuration Profile(s), common for all PMEs in the EFMCu port. This object is a list of pointers to entries in either efmCuPme2BProfileTable"
+EFM-CU-MIB,efmCuTargetDataRate,1.3.6.1.2.1.167.1.1.1.1.4,column,Unsigned32(1..100000|999999),read-write,"Desired EFMCu port 'net' (as seen across MII) Data Rate in Kbps, to be achieved during initialization, under spectral restrictions placed on each PME "
+EFM-CU-MIB,efmCuTargetSnrMgn,1.3.6.1.2.1.167.1.1.1.1.5,column,Unsigned32(0..21),read-write,"Desired EFMCu port SNR Margin to be achieved on all PMEs assigned to the port, during initializiation. (The SNR margin is the difference between the d"
+EFM-CU-MIB,efmCuAdaptiveSpectra,1.3.6.1.2.1.167.1.1.1.1.6,column,TruthValue,read-write,Indicates how to utilize excess capacity when the copper environment allows to achieve higher total data rate than that specified by the efmCuTargetDa
+EFM-CU-MIB,efmCuThreshLowRate,1.3.6.1.2.1.167.1.1.1.1.7,column,Unsigned32(1..100000),read-write,This object configures the EFMCu port low rate crossing alarm threshold. When the current value of ifSpeed for this port reaches/drops below or exceed
+EFM-CU-MIB,efmCuLowRateCrossingEnable,1.3.6.1.2.1.167.1.1.1.1.8,column,TruthValue,read-write,Indicates whether efmCuLowRateCrossing notifications should be generated for this interface. Value of true(1) indicates that efmCuLowRateCrossing noti
+EFM-CU-MIB,efmCuPAFSupported,1.3.6.1.2.1.167.1.1.2.1.1,column,TruthValue,read-only,PME Aggregation Function (PAF) Capability of the EFMCu port (PCS). This object has a value of true(1) when the PCS can perform PME aggregation on the 
+EFM-CU-MIB,efmCuPeerPAFSupported,1.3.6.1.2.1.167.1.1.2.1.2,column,TruthValueOrUnknown,read-only,PME Aggregation Function (PAF) Capability of the EFMCu port (PCS) link partner. This object has a value of true(1) when the remote PCS can perform PME
+EFM-CU-MIB,efmCuPAFCapacity,1.3.6.1.2.1.167.1.1.2.1.3,column,Unsigned32 (1..32),read-only,Number of PMEs that can be aggregated by the local PAF. The number of PMEs currently assigned to a particular EFMCu port (efmCuNumPMEs) is never great
+EFM-CU-MIB,efmCuPeerPAFCapacity,1.3.6.1.2.1.167.1.1.2.1.4,column,Unsigned32 (0|1..32),read-only,Number of PMEs that can be aggregated by the PAF of the peer Phy (PCS port). Value of 0 is returned when peer PAF Capacity is unknown (peer cannot be 
+EFM-CU-MIB,efmCuFltStatus,1.3.6.1.2.1.167.1.1.3.1.1,column,"BITS { noPeer(0), peerPowerLoss(1), pmeSubTypeMismatch(2), lowRate(3) }",read-only,EFMCu (PCS) port Fault Status. This is a bitmap of possible conditions. The various bit positions are: noPeer - peer PHY cannot be reached (e.g. no PM
+EFM-CU-MIB,efmCuPortSide,1.3.6.1.2.1.167.1.1.3.1.2,column,"INTEGER { subscriber(1), office(2), unknown(3) }",read-only,EFM port mode of operation (subtype). The value of 'subscriber' indicates the port is designated as '-R' subtype (all PMEs assigned to this port are o
+EFM-CU-MIB,efmCuNumPMEs,1.3.6.1.2.1.167.1.1.3.1.3,column,Unsigned32 (0..32),read-only,Number of PMEs that is currently aggregated by the local PAF (assigned to the EFMCu port using ifStackTable). This number is never greater than efmCuP
+EFM-CU-MIB,efmCuPAFInErrors,1.3.6.1.2.1.167.1.1.3.1.4,column,Counter32,read-only,A number of fragments that have been received across the gamma interface with RxErr asserted and discarded. This read-only counter is inactive (not in
+EFM-CU-MIB,efmCuPAFInSmallFragments,1.3.6.1.2.1.167.1.1.3.1.5,column,Counter32,read-only,"A number of fragments smaller than minFragmentSize (64 Bytes), which have been received across the gamma interface and discarded. This read-only count"
+EFM-CU-MIB,efmCuPAFInLargeFragments,1.3.6.1.2.1.167.1.1.3.1.6,column,Counter32,read-only,"A number of fragments larger than maxFragmentSize (512 Bytes), which have been received across the gamma interface and discarded. This read-only count"
+EFM-CU-MIB,efmCuPAFInBadFragments,1.3.6.1.2.1.167.1.1.3.1.7,column,Counter32,read-only,"A number of fragments which do not fit into the sequence expected by the frame assembly function, that have been received across the gamma interface a"
+EFM-CU-MIB,efmCuPAFInLostFragments,1.3.6.1.2.1.167.1.1.3.1.8,column,Counter32,read-only,"A number of gaps in the sequence of fragments, which have been received across the gamma interface (the frame buffer is flushed to the next valid fram"
+EFM-CU-MIB,efmCuPAFInLostStarts,1.3.6.1.2.1.167.1.1.3.1.9,column,Counter32,read-only,A number of missing StartOfPacket indicators expected by the frame assembly function. This read-only counter is inactive when the PAF is unsupported o
+EFM-CU-MIB,efmCuPAFInLostEnds,1.3.6.1.2.1.167.1.1.3.1.10,column,Counter32,read-only,A number of missing EndOfPacket indicators expected by the frame assembly function. This read-only counter is inactive when the PAF is unsupported or 
+EFM-CU-MIB,efmCuPAFInOverflows,1.3.6.1.2.1.167.1.1.3.1.11,column,Counter32,read-only,"A number of fragments, received across the gamma interface and discarded, which would have caused the frame assembly buffer to overflow. This read-onl"
+EFM-CU-MIB,efmCuPmeAdminSubType,1.3.6.1.2.1.167.1.2.1.1.1,column,"INTEGER { ieee2BaseTLO(1), ieee2BaseTLR(2), ieee10PassTSO(3), ieee10PassTSR(4), ",read-write,Administrative (desired) sub-type of the PME. Possible values are: ieee2BaseTLO - PME SHALL operate as 2BaseTL-O ieee2BaseTLR - PME SHALL operate as 2
+EFM-CU-MIB,efmCuPmeAdminProfile,1.3.6.1.2.1.167.1.2.1.1.2,column,ProfileIndexOrZero,read-write,"Desired PME configuration Profile. This object is a pointer to an entry in either efmCuPme2BProfileTable or efmCuPme10PProfileTable, depending on the "
+EFM-CU-MIB,efmCuPAFRemoteDiscoveryCode,1.3.6.1.2.1.167.1.2.1.1.3,column,PhysAddress,read-write,PAF Remote Discovery Code of the PME port at CO. A 6 Byte long Discovery Code of the peer PCS connected via the PME. Reading this object results in a 
+EFM-CU-MIB,efmCuPmeThreshLineAtn,1.3.6.1.2.1.167.1.2.1.1.4,column,Integer32(-127..128),read-write,Desired Line Attenuation Threshold for the 2B/10P PME. This object configures the line attenuation alarm threshold. When the current value of Line Att
+EFM-CU-MIB,efmCuPmeThreshSnrMgn,1.3.6.1.2.1.167.1.2.1.1.5,column,Integer32(-127..128),read-write,Desired SNR Margin Threshold for the 2B/10P PME. This object configures the SNR margin alarm threshold. When the current value of SNR Margin reaches o
+EFM-CU-MIB,efmCuPmeLineAtnCrossingEnable,1.3.6.1.2.1.167.1.2.1.1.6,column,TruthValue,read-write,Indicates whether efmCuPmeLineAtnCrossing notifications should be generated for this interface. Value of true(1) indicates that efmCuPmeLineAtnCrossin
+EFM-CU-MIB,efmCuPmeSnrMgnCrossingEnable,1.3.6.1.2.1.167.1.2.1.1.7,column,TruthValue,read-write,Indicates whether efmCuPmeSnrMgnCrossing notifications should be generated for this interface. Value of true(1) indicates that efmCuPmeSnrMgnCrossing 
+EFM-CU-MIB,efmCuPmeDeviceFaultEnable,1.3.6.1.2.1.167.1.2.1.1.8,column,TruthValue,read-write,Indicates whether efmCuPmeDeviceFault notifications should be generated for this interface. Value of true(1) indicates that efmCuPmeDeviceFault notifi
+EFM-CU-MIB,efmCuPmeConfigInitFailEnable,1.3.6.1.2.1.167.1.2.1.1.9,column,TruthValue,read-write,Indicates whether efmCuPmeConfigInitFailure notifications should be generated for this interface. Value of true(1) indicates that efmCuPmeConfigInitFa
+EFM-CU-MIB,efmCuPmeProtocolInitFailEnable,1.3.6.1.2.1.167.1.2.1.1.10,column,TruthValue,read-write,Indicates whether efmCuPmeProtocolInitFailure notifications should be generated for this interface. Value of true(1) indicates that efmCuPmeProtocolIn
+EFM-CU-MIB,efmCuPmeSubTypesSupported,1.3.6.1.2.1.167.1.2.2.1.1,column,"BITS { ieee2BaseTLO(0), ieee2BaseTLR(1), ieee10PassTSO(2), ieee10PassTSR(3) }",read-only,PME supported sub-types. This is a bitmap of possible sub-types. The various bit positions are: ieee2BaseTLO - PME is capable of operating as 2BaseTL-
+EFM-CU-MIB,efmCuPmeOperStatus,1.3.6.1.2.1.167.1.2.3.1.1,column,"INTEGER { up(1), downNotReady(2), downReady(3), init(4) }",read-only,Current PME link Operational Status. Possible values are: up(1) - link is Up and ready to pass 64/65B encoded frames or fragments. downNotReady(2) - l
+EFM-CU-MIB,efmCuPmeFltStatus,1.3.6.1.2.1.167.1.2.3.1.2,column,"BITS { lossOfFraming(0), snrMgnDefect(1), lineAtnDefect(2), deviceFault(3), conf",read-only,Current/Last PME link Fault Status. This is a bitmap of possible conditions. The various bit positions are: lossOfFraming - Loss of Framing for 10P or
+EFM-CU-MIB,efmCuPmeOperSubType,1.3.6.1.2.1.167.1.2.3.1.3,column,"INTEGER { ieee2BaseTLO(1), ieee2BaseTLR(2), ieee10PassTSO(3), ieee10PassTSR(4) }",read-only,Current operational sub-type of the PME. Possible values are: ieee2BaseTLO - PME operates as 2BaseTL-O ieee2BaseTLR - PME operates as 2BaseTL-R ieee10
+EFM-CU-MIB,efmCuPmeOperProfile,1.3.6.1.2.1.167.1.2.3.1.4,column,ProfileIndexOrZero,read-only,"PME current operating Profile. This object is a pointer to an entry in either efmCuPme2BProfileTable or efmCuPme10PProfileTable, depending on the curr"
+EFM-CU-MIB,efmCuPmeSnrMgn,1.3.6.1.2.1.167.1.2.3.1.5,column,Integer32(-127..128|65535),read-only,The current Signal-to-Noise Ratio (SNR) margin with respect to the received signal as perceived by the local PME. The value of 65535 is returned when 
+EFM-CU-MIB,efmCuPmePeerSnrMgn,1.3.6.1.2.1.167.1.2.3.1.6,column,Integer32(-127..128|65535),read-only,"The current SNR margin in dB with respect to the received signal, as perceived by the remote (link partner) PME. The value of 65535 is returned when P"
+EFM-CU-MIB,efmCuPmeLineAtn,1.3.6.1.2.1.167.1.2.3.1.7,column,Integer32(-127..128|65535),read-only,The current Line Attenuation in dB as perceived by the local PME. The value of 65535 is returned when PME is down or initializing. If a Clause 45 MDIO
+EFM-CU-MIB,efmCuPmePeerLineAtn,1.3.6.1.2.1.167.1.2.3.1.8,column,Integer32(-127..128|65535),read-only,The current Line Attenuation in dB as perceived by the remote (link partner) PME. The value of 65535 is returned when PME is down or initializing. Thi
+EFM-CU-MIB,efmCuPmeEquivalentLength,1.3.6.1.2.1.167.1.2.3.1.9,column,Unsigned32(0..8192|65535),read-only,"An estimate of the equivalent loop's Physical Length in meters, as perceived by the PME after the link is established. An equivalent loop is a hypothe"
+EFM-CU-MIB,efmCuPmeTCCodingErrors,1.3.6.1.2.1.167.1.2.3.1.10,column,Counter32,read-only,A number of 64/65-octet encapsulation errors. This counter is incremented for each 64/65-octet encapsulation error detected by the 64/65-octet receive
+EFM-CU-MIB,efmCuPmeTCCrcErrors,1.3.6.1.2.1.167.1.2.3.1.11,column,Counter32,read-only,A number of TC-CRC errors. This counter is incremented for each TC-CRC error detected by the 64/65-octet receive function (see 61.3.3.3 and Figure 61-
+EFM-CU-MIB,efmCuPme2BProfileIndex,1.3.6.1.2.1.167.1.2.5.2.1.1,column,ProfileIndex,not-accessible,2BASE-TL PME Profile index. This object is the unique index associated with this profile. Entries in this table are referenced via efmCuAdminProfile o
+EFM-CU-MIB,efmCuPme2BProfileDescr,1.3.6.1.2.1.167.1.2.5.2.1.2,column,SnmpAdminString,read-create,A textual string containing information about 2BASE-TL PME Profile. The string MAY include information about data rate and spectral limitations of thi
+EFM-CU-MIB,efmCuPme2BRegion,1.3.6.1.2.1.167.1.2.5.2.1.3,column,"INTEGER { region1(1), region2(2) }",read-create,"Regional settings for 2BASE-TL PME, as specified in the relevant Regional Annex of [G.991.2]. Regional settings specify Power Spectral Density (PSD) m"
+EFM-CU-MIB,efmCuPme2BsMode,1.3.6.1.2.1.167.1.2.5.2.1.4,column,ProfileIndexOrZero,read-create,Desired custom Spectral Mode for 2BASE-TL PME. This object is a pointer to an entry in efmCuPme2BsModeTable and a block of entries in efmCuPme2BRateRe
+EFM-CU-MIB,efmCuPme2BMinDataRate,1.3.6.1.2.1.167.1.2.5.2.1.5,column,Unsigned32(192..5696),read-create,"Minimum Data Rate for the 2BASE-TL PME. This object can take values of (n x 64)Kbps, where n=3..60 for 16-TCPAM and n=12..89 for 32-TCPAM encoding. Th"
+EFM-CU-MIB,efmCuPme2BMaxDataRate,1.3.6.1.2.1.167.1.2.5.2.1.6,column,Unsigned32(192..5696),read-create,"Maximum Data Rate for the 2BASE-TL PME. This object can take values of (n x 64)Kbps, where n=3..60 for 16-TCPAM and n=12..89 for 32-TCPAM encoding. Th"
+EFM-CU-MIB,efmCuPme2BPower,1.3.6.1.2.1.167.1.2.5.2.1.7,column,Unsigned32(0|10..42),read-create,Signal Transmit Power. Multiple of 0.5dBm. The value of 0 in the administrative profile means that the signal transmit power is not fixed and SHALL be
+EFM-CU-MIB,efmCuPme2BConstellation,1.3.6.1.2.1.167.1.2.5.2.1.8,column,"INTEGER { adaptive(0), tcpam16(1), tcpam32(2) }",read-create,TCPAM Constellation of the 2BASE-TL PME. The possible values are: adaptive(0) - either 16- or 32-TCPAM tcpam16(1) - 16-TCPAM tcpam32(2) - 32-TCPAM The
+EFM-CU-MIB,efmCuPme2BProfileRowStatus,1.3.6.1.2.1.167.1.2.5.2.1.9,column,RowStatus,read-create,This object controls creation/deletion of the associated entry in efmCuPme2BProfileTable per the semantics of RowStatus. If an 'active' entry is refer
+EFM-CU-MIB,efmCuPme2BsModeIndex,1.3.6.1.2.1.167.1.2.5.3.1.1,column,ProfileIndex,not-accessible,2BASE-TL PME Spectral Mode index. This object is the unique index associated with this spectral mode. Entries in this table are referenced via efmCuPm
+EFM-CU-MIB,efmCuPme2BsModeDescr,1.3.6.1.2.1.167.1.2.5.3.1.2,column,SnmpAdminString,read-create,A textual string containing information about 2BASE-TL PME spectral mode. The string MAY include information about corresponding (country-specific) sp
+EFM-CU-MIB,efmCuPme2BsModeRowStatus,1.3.6.1.2.1.167.1.2.5.3.1.3,column,RowStatus,read-create,This object controls creation/deletion of the associated entry in efmCuPme2BsModeTable per the semantics of RowStatus. If an 'active' entry is referen
+EFM-CU-MIB,efmCuPme2BReachRateIndex,1.3.6.1.2.1.167.1.2.5.4.1.1,column,ProfileIndex,not-accessible,2BASE-TL custom spectral mode Reach-Rate table index. This object is the unique index associated with each enry.
+EFM-CU-MIB,efmCuPme2BEquivalentLength,1.3.6.1.2.1.167.1.2.5.4.1.2,column,Unsigned32(0..8192),read-create,Maximum allowed Equivalent loop's Physical Length in meters for the specified data rates. An equivalent loop is a hypothetical 26AWG (0.4mm) loop with
+EFM-CU-MIB,efmCuPme2BMaxDataRatePam16,1.3.6.1.2.1.167.1.2.5.4.1.3,column,Unsigned32(0|192..5696),read-create,Maximum data rate for 2BASE-TL PME at the specified Equivalent loop's Length using TC-PAM16 encoding. The value of zero means that TC-PAM16 encoding s
+EFM-CU-MIB,efmCuPme2BMaxDataRatePam32,1.3.6.1.2.1.167.1.2.5.4.1.4,column,Unsigned32(0|192..5696),read-create,Maximum data rate for 2BASE-TL PME at the specified Equivalent loop's Length using TC-PAM32 encoding. The value of zero means that TC-PAM32 encoding s
+EFM-CU-MIB,efmCuPme2BReachRateRowStatus,1.3.6.1.2.1.167.1.2.5.4.1.5,column,RowStatus,read-create,This object controls creation/deletion of the associated entry in efmCuPme2BReachRateTable per the semantics of RowStatus. If an 'active' entry is ref
+EFM-CU-MIB,efmCuPme10PProfileIndex,1.3.6.1.2.1.167.1.2.6.1.1.1,column,ProfileIndex,not-accessible,10PASS-TS PME Profile Index. This object is the unique index associated with this profile. Entries in this table are referenced via efmCuAdminProfile 
+EFM-CU-MIB,efmCuPme10PProfileDescr,1.3.6.1.2.1.167.1.2.6.1.1.2,column,SnmpAdminString,read-create,A textual string containing information about 10PASS-TS PME Profile. The string MAY include information about data rate and spectral limitations of th
+EFM-CU-MIB,efmCuPme10PBandplanPSDMskProfile,1.3.6.1.2.1.167.1.2.6.1.1.3,column,"INTEGER { profile1(1), profile2(2), profile3(3), profile4(4), profile5(5), profi",read-create,"10PASS-TS PME Bandplan and PSD Mask profile, as specified in 802.3ah Annex 62A. Possible values are: --------------+------------------------+---------"
+EFM-CU-MIB,efmCuPme10PUPBOReferenceProfile,1.3.6.1.2.1.167.1.2.6.1.1.4,column,"INTEGER { profile1(1), profile2(2), profile3(3), profile4(4), profile5(5), profi",read-create,"10PASS-TS PME Upstream Power Back-Off (UPBO) Reference PSD Profile, as specified in 802.3ah Annex 62A. Possible values are: profile1(1) - T1.424/T-U N"
+EFM-CU-MIB,efmCuPme10PBandNotchProfiles,1.3.6.1.2.1.167.1.2.6.1.1.5,column,"BITS { profile0(0), profile1(1), profile2(2), profile3(3), profile4(4), profile5",read-create,"10PASS-TS PME Egress Control Band Notch Profile bitmap, as specified in 802.3ah Annex 62A. Possible values are: --------------+---------+----------+--"
+EFM-CU-MIB,efmCuPme10PPayloadURateProfile,1.3.6.1.2.1.167.1.2.6.1.1.6,column,"INTEGER { profile5(5), profile10(10), profile15(15), profile20(20), profile25(25",read-create,"10PASS-TS PME Upstream Payload Rate Profile, as specified in 802.3ah Annex 62A. Possible values are: profile5(5) - 2.5 Mbps profile10(10) - 5 Mbps pro"
+EFM-CU-MIB,efmCuPme10PPayloadDRateProfile,1.3.6.1.2.1.167.1.2.6.1.1.7,column,"INTEGER { profile5(5), profile10(10), profile15(15), profile20(20), profile25(25",read-create,"10PASS-TS PME Downstream Payload Rate Profile, as specified in 802.3ah Annex 62A. Possible values are: profile5(5) - 2.5 Mbps profile10(10) - 5 Mbps p"
+EFM-CU-MIB,efmCuPme10PProfileRowStatus,1.3.6.1.2.1.167.1.2.6.1.1.8,column,RowStatus,read-create,This object controls creation/deletion of the associated entry in efmCuPme10PProfileTable per the semantics of RowStatus. If an active entry is refere
+EFM-CU-MIB,efmCuPme10PFECCorrectedBlocks,1.3.6.1.2.1.167.1.2.6.2.1.1,column,Counter32,read-only,A count of received and corrected FEC codewords in 10PASS-TS PME. This object maps to aPMEFECCorrectedBlocks attribute in clause 30. If a Clause 45 MD
+EFM-CU-MIB,efmCuPme10PFECUncorrectedBlocks,1.3.6.1.2.1.167.1.2.6.2.1.2,column,Counter32,read-only,"A count of received FEC codewords in 10PASS-TS PME, which are uncorrectable. This object maps to aPMEFECUncorrectableBlocks attribute in clause 30. If"
