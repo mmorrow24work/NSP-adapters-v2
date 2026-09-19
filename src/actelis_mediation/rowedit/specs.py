@@ -3,7 +3,7 @@
 DO NOT EDIT BY HAND -- regenerate with:
     python3 tools/gen_row_editor_specs.py > src/actelis_mediation/rowedit/specs.py
 
-63 tables in ML540M-MIB.7z use the VTSSRowEditorState mechanism
+64 tables in ML540M-MIB.7z use the VTSSRowEditorState mechanism
 proven end-to-end against the lab unit on 2026-09-18
 (docs/lab-results/ml540m-row-editor-20260918.txt). Only that one table --
 SNMP_CONFIG_COMMUNITY_TABLE -- has been exercised on real hardware; the
@@ -20,7 +20,7 @@ ACCESS_MANAGEMENT_CONFIG_IPV4_TABLE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.51.1.2.3.100.0",
     table_oid="1.3.6.1.4.1.5468.100.51.1.2.2",
     row_action_column_oid="1.3.6.1.4.1.5468.100.51.1.2.2.1.100",
-    index_spec=IndexSpec(names=['ml540mAccessManagementConfigIpv4AccessIndex'], kinds=['integer']),
+    index_spec=IndexSpec(names=['accessIndex'], kinds=['integer']),
     fields={
         'accessIndex': EditorField("1.3.6.1.4.1.5468.100.51.1.2.3.1.0", "i"),   # Integer32 (0..2147483647)
         'vlanId': EditorField("1.3.6.1.4.1.5468.100.51.1.2.3.2.0", "u"),   # VTSSUnsigned16
@@ -37,7 +37,7 @@ ACCESS_MANAGEMENT_CONFIG_IPV6_TABLE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.51.1.2.5.100.0",
     table_oid="1.3.6.1.4.1.5468.100.51.1.2.4",
     row_action_column_oid="1.3.6.1.4.1.5468.100.51.1.2.4.1.100",
-    index_spec=IndexSpec(names=['ml540mAccessManagementConfigIpv6AccessIndex'], kinds=['integer']),
+    index_spec=IndexSpec(names=['accessIndex'], kinds=['integer']),
     fields={
         'accessIndex': EditorField("1.3.6.1.4.1.5468.100.51.1.2.5.1.0", "i"),   # Integer32 (0..2147483647)
         'vlanId': EditorField("1.3.6.1.4.1.5468.100.51.1.2.5.2.0", "u"),   # VTSSUnsigned16
@@ -54,7 +54,7 @@ ACL_CONFIG_ACE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.17.1.2.4.2.10000.0",
     table_oid="1.3.6.1.4.1.5468.100.17.1.2.4.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.17.1.2.4.1.1.10000",
-    index_spec=IndexSpec(names=['AceId'], kinds=['integer']),
+    index_spec=IndexSpec(names=['aceId'], kinds=['integer']),
     fields={
         'aceId': EditorField("1.3.6.1.4.1.5468.100.17.1.2.4.2.1.0", "i"),   # Integer32 (0..2147483647)
         'nextAceId': EditorField("1.3.6.1.4.1.5468.100.17.1.2.4.2.2.0", "u"),   # Unsigned32
@@ -150,7 +150,7 @@ AGGR_CONFIG_GROUP_TABLE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.19.1.2.3.100.0",
     table_oid="1.3.6.1.4.1.5468.100.19.1.2.2",
     row_action_column_oid="1.3.6.1.4.1.5468.100.19.1.2.2.1.100",
-    index_spec=IndexSpec(names=['ml540mAggrConfigGroupAggrIndexNo'], kinds=['integer']),
+    index_spec=IndexSpec(names=['aggrIndexNo'], kinds=['integer']),
     fields={
         'aggrIndexNo': EditorField("1.3.6.1.4.1.5468.100.19.1.2.3.1.0", "i"),   # VTSSInterfaceIndex
         'portMembers': EditorField("1.3.6.1.4.1.5468.100.19.1.2.3.2.0", "s"),   # VTSSPortList
@@ -162,7 +162,7 @@ ARP_INSPECTION_CONFIG_STATIC_TABLE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.63.1.2.6.100.0",
     table_oid="1.3.6.1.4.1.5468.100.63.1.2.5",
     row_action_column_oid="1.3.6.1.4.1.5468.100.63.1.2.5.1.100",
-    index_spec=IndexSpec(names=['ml540mArpInspectionConfigStaticIfIndex', 'ml540mArpInspectionConfigStaticVlanId', 'ml540mArpInspectionConfigStaticMacAddress', 'ml540mArpInspectionConfigStaticIpAddress'], kinds=['integer', 'integer', 'string', 'ipaddress']),
+    index_spec=IndexSpec(names=['ifIndex', 'vlanId', 'macAddress', 'ipAddress'], kinds=['integer', 'integer', 'string', 'ipaddress']),
     fields={
         'ifIndex': EditorField("1.3.6.1.4.1.5468.100.63.1.2.6.1.0", "i"),   # VTSSInterfaceIndex
         'vlanId': EditorField("1.3.6.1.4.1.5468.100.63.1.2.6.2.0", "i"),   # Integer32 (1..4095)
@@ -176,7 +176,7 @@ ARP_INSPECTION_CONFIG_VLAN_TABLE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.63.1.2.4.100.0",
     table_oid="1.3.6.1.4.1.5468.100.63.1.2.3",
     row_action_column_oid="1.3.6.1.4.1.5468.100.63.1.2.3.1.100",
-    index_spec=IndexSpec(names=['ml540mArpInspectionConfigVlanVlanId'], kinds=['integer']),
+    index_spec=IndexSpec(names=['vlanId'], kinds=['integer']),
     fields={
         'vlanId': EditorField("1.3.6.1.4.1.5468.100.63.1.2.4.1.0", "i"),   # Integer32 (1..4095)
         'logType': EditorField("1.3.6.1.4.1.5468.100.63.1.2.4.2.0", "i"),   # VTSSArpInspectionLogType
@@ -188,10 +188,22 @@ DHCP6_CLIENT_CONFIG_INTERFACE_TABLE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.126.1.2.1.2.100.0",
     table_oid="1.3.6.1.4.1.5468.100.126.1.2.1.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.126.1.2.1.1.1.100",
-    index_spec=IndexSpec(names=['ml540mDhcp6ClientConfigInterfaceIfIndex'], kinds=['integer']),
+    index_spec=IndexSpec(names=['ifIndex'], kinds=['integer']),
     fields={
         'ifIndex': EditorField("1.3.6.1.4.1.5468.100.126.1.2.1.2.1.0", "i"),   # VTSSInterfaceIndex
         'rapidCommit': EditorField("1.3.6.1.4.1.5468.100.126.1.2.1.2.2.0", "i"),   # TruthValue
+    },
+)
+
+DHCP_SERVER_CONFIG_EXCLUDED_IP_TABLE = RowEditorSpec(
+    name="ml540mDhcpServerConfigExcludedIpTable",
+    action_oid="1.3.6.1.4.1.5468.100.109.1.2.4.100.0",
+    table_oid="1.3.6.1.4.1.5468.100.109.1.2.3",
+    row_action_column_oid="1.3.6.1.4.1.5468.100.109.1.2.3.1.100",
+    index_spec=IndexSpec(names=['lowIpAddress', 'highIpAddress'], kinds=['ipaddress', 'ipaddress']),
+    fields={
+        'lowIpAddress': EditorField("1.3.6.1.4.1.5468.100.109.1.2.4.1.0", "a"),   # IpAddress
+        'highIpAddress': EditorField("1.3.6.1.4.1.5468.100.109.1.2.4.2.0", "a"),   # IpAddress
     },
 )
 
@@ -200,7 +212,7 @@ DHCP_SERVER_CONFIG_POOL_TABLE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.109.1.2.6.100.0",
     table_oid="1.3.6.1.4.1.5468.100.109.1.2.5",
     row_action_column_oid="1.3.6.1.4.1.5468.100.109.1.2.5.1.100",
-    index_spec=IndexSpec(names=['ml540mDhcpServerConfigPoolPoolName'], kinds=['string']),
+    index_spec=IndexSpec(names=['poolName'], kinds=['string']),
     fields={
         'poolName': EditorField("1.3.6.1.4.1.5468.100.109.1.2.6.1.0", "s"),   # VTSSDisplayString (SIZE(0..32))
         'poolType': EditorField("1.3.6.1.4.1.5468.100.109.1.2.6.2.0", "i"),   # VTSSDhcpServerPoolEnum
@@ -255,7 +267,7 @@ EPS_CONFIG_INSTANCE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.45.1.2.2.100.0",
     table_oid="1.3.6.1.4.1.5468.100.45.1.2.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.45.1.2.1.1.100",
-    index_spec=IndexSpec(names=['Id'], kinds=['integer']),
+    index_spec=IndexSpec(names=['id'], kinds=['integer']),
     fields={
         'id': EditorField("1.3.6.1.4.1.5468.100.45.1.2.2.1.0", "i"),   # Integer32 (0..2147483647)
         'architecture': EditorField("1.3.6.1.4.1.5468.100.45.1.2.2.2.0", "i"),   # VTSSEpsArchitecture
@@ -269,7 +281,7 @@ ERPS_CONFIG = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.72.1.2.2.100.0",
     table_oid="1.3.6.1.4.1.5468.100.72.1.2.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.72.1.2.1.1.100",
-    index_spec=IndexSpec(names=['GroupIndex'], kinds=['integer']),
+    index_spec=IndexSpec(names=['groupIndex'], kinds=['integer']),
     fields={
         'groupIndex': EditorField("1.3.6.1.4.1.5468.100.72.1.2.2.1.0", "i"),   # Integer32 (0..2147483647)
         'ringType': EditorField("1.3.6.1.4.1.5468.100.72.1.2.2.2.0", "i"),   # VTSSErpsRingType
@@ -301,7 +313,7 @@ EVC_CONFIG_ECE_TABLE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.62.1.2.5.2.10000.0",
     table_oid="1.3.6.1.4.1.5468.100.62.1.2.5.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.62.1.2.5.1.1.10000",
-    index_spec=IndexSpec(names=['ml540mEvcConfigEceEceId'], kinds=['integer']),
+    index_spec=IndexSpec(names=['eceId'], kinds=['integer']),
     fields={
         'eceId': EditorField("1.3.6.1.4.1.5468.100.62.1.2.5.2.1.0", "i"),   # Integer32 (1..4096)
         'nextId': EditorField("1.3.6.1.4.1.5468.100.62.1.2.5.2.2.0", "u"),   # Unsigned32
@@ -393,7 +405,7 @@ EVC_CONFIG_EVC_TABLE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.62.1.2.4.2.10000.0",
     table_oid="1.3.6.1.4.1.5468.100.62.1.2.4.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.62.1.2.4.1.1.10000",
-    index_spec=IndexSpec(names=['ml540mEvcConfigEvcEvcId'], kinds=['integer']),
+    index_spec=IndexSpec(names=['evcId'], kinds=['integer']),
     fields={
         'evcId': EditorField("1.3.6.1.4.1.5468.100.62.1.2.4.2.1.0", "i"),   # Integer32 (0..4095)
         'vid': EditorField("1.3.6.1.4.1.5468.100.62.1.2.4.2.2.0", "u"),   # VTSSUnsigned16
@@ -420,7 +432,7 @@ EVC_CONFIG_MPLS_TP_PW_TABLE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.62.1.2.7.2.10000.0",
     table_oid="1.3.6.1.4.1.5468.100.62.1.2.7.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.62.1.2.7.1.1.10000",
-    index_spec=IndexSpec(names=['ml540mEvcConfigMplsTpPwEvcId', 'ml540mEvcConfigMplsTpPwIfIndex'], kinds=['integer', 'integer']),
+    index_spec=IndexSpec(names=['evcId', 'ifIndex'], kinds=['integer', 'integer']),
     fields={
         'evcId': EditorField("1.3.6.1.4.1.5468.100.62.1.2.7.2.1.0", "i"),   # Integer32 (0..4095)
         'ifIndex': EditorField("1.3.6.1.4.1.5468.100.62.1.2.7.2.2.0", "i"),   # VTSSInterfaceIndex
@@ -433,7 +445,7 @@ HQOS_CONFIG_INTERFACE_HQOS_TABLE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.125.1.2.2.3.10000.0",
     table_oid="1.3.6.1.4.1.5468.100.125.1.2.2.2",
     row_action_column_oid="1.3.6.1.4.1.5468.100.125.1.2.2.2.1.10000",
-    index_spec=IndexSpec(names=['ml540mHqosConfigInterfaceHqosIfIndex', 'ml540mHqosConfigInterfaceHqosHqosId'], kinds=['integer', 'integer']),
+    index_spec=IndexSpec(names=['ifIndex', 'hqosId'], kinds=['integer', 'integer']),
     fields={
         'ifIndex': EditorField("1.3.6.1.4.1.5468.100.125.1.2.2.3.1.0", "i"),   # VTSSInterfaceIndex
         'hqosId': EditorField("1.3.6.1.4.1.5468.100.125.1.2.2.3.2.0", "i"),   # Integer32 (0..255)
@@ -450,7 +462,7 @@ IP_CONFIG_INTERFACES_TABLE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.102.1.2.2.2.100.0",
     table_oid="1.3.6.1.4.1.5468.100.102.1.2.2.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.102.1.2.2.1.1.100",
-    index_spec=IndexSpec(names=['ml540mIpConfigInterfacesIfIndex'], kinds=['integer']),
+    index_spec=IndexSpec(names=['ifIndex'], kinds=['integer']),
     fields={
         'ifIndex': EditorField("1.3.6.1.4.1.5468.100.102.1.2.2.2.1.0", "i"),   # VTSSInterfaceIndex
     },
@@ -461,7 +473,7 @@ IP_CONFIG_ROUTES_IPV4 = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.102.1.2.3.2.100.0",
     table_oid="1.3.6.1.4.1.5468.100.102.1.2.3.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.102.1.2.3.1.1.100",
-    index_spec=IndexSpec(names=['NetworkAddress', 'NetworkPrefixSize', 'NextHop'], kinds=['ipaddress', 'integer', 'ipaddress']),
+    index_spec=IndexSpec(names=['networkAddress', 'networkPrefixSize', 'nextHop'], kinds=['ipaddress', 'integer', 'ipaddress']),
     fields={
         'networkAddress': EditorField("1.3.6.1.4.1.5468.100.102.1.2.3.2.1.0", "a"),   # IpAddress
         'networkPrefixSize': EditorField("1.3.6.1.4.1.5468.100.102.1.2.3.2.2.0", "i"),   # Integer32 (0..32)
@@ -474,7 +486,7 @@ IP_CONFIG_ROUTES_IPV6 = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.102.1.2.3.4.100.0",
     table_oid="1.3.6.1.4.1.5468.100.102.1.2.3.3",
     row_action_column_oid="1.3.6.1.4.1.5468.100.102.1.2.3.3.1.100",
-    index_spec=IndexSpec(names=['NetworkAddress', 'NetworkPrefixSize', 'NextHop', 'NextHopInterface'], kinds=['string', 'integer', 'string', 'integer']),
+    index_spec=IndexSpec(names=['networkAddress', 'networkPrefixSize', 'nextHop', 'nextHopInterface'], kinds=['string', 'integer', 'string', 'integer']),
     fields={
         'networkAddress': EditorField("1.3.6.1.4.1.5468.100.102.1.2.3.4.1.0", "x"),   # InetAddressIPv6
         'networkPrefixSize': EditorField("1.3.6.1.4.1.5468.100.102.1.2.3.4.2.0", "i"),   # Integer32 (0..128)
@@ -488,7 +500,7 @@ IPMC_MVR_CONFIG_INTERFACE_TABLE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.68.1.2.4.100.0",
     table_oid="1.3.6.1.4.1.5468.100.68.1.2.3",
     row_action_column_oid="1.3.6.1.4.1.5468.100.68.1.2.3.1.100",
-    index_spec=IndexSpec(names=['ml540mIpmcMvrConfigInterfaceIfIndex'], kinds=['integer']),
+    index_spec=IndexSpec(names=['ifIndex'], kinds=['integer']),
     fields={
         'ifIndex': EditorField("1.3.6.1.4.1.5468.100.68.1.2.4.1.0", "i"),   # VTSSInterfaceIndex
         'name': EditorField("1.3.6.1.4.1.5468.100.68.1.2.4.2.0", "s"),   # VTSSDisplayString (SIZE(0..16))
@@ -506,7 +518,7 @@ IPMC_PROFILE_CONFIG_IPV4_ADDRESS_RANGE_TABLE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.38.1.2.5.100.0",
     table_oid="1.3.6.1.4.1.5468.100.38.1.2.4",
     row_action_column_oid="1.3.6.1.4.1.5468.100.38.1.2.4.1.100",
-    index_spec=IndexSpec(names=['ml540mIpmcProfileConfigIpv4AddressRangeRangeName'], kinds=['string']),
+    index_spec=IndexSpec(names=['rangeName'], kinds=['string']),
     fields={
         'rangeName': EditorField("1.3.6.1.4.1.5468.100.38.1.2.5.1.0", "s"),   # VTSSDisplayString (SIZE(0..16))
         'startAddress': EditorField("1.3.6.1.4.1.5468.100.38.1.2.5.2.0", "a"),   # IpAddress
@@ -519,7 +531,7 @@ IPMC_PROFILE_CONFIG_IPV6_ADDRESS_RANGE_TABLE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.38.1.2.7.100.0",
     table_oid="1.3.6.1.4.1.5468.100.38.1.2.6",
     row_action_column_oid="1.3.6.1.4.1.5468.100.38.1.2.6.1.100",
-    index_spec=IndexSpec(names=['ml540mIpmcProfileConfigIpv6AddressRangeRangeName'], kinds=['string']),
+    index_spec=IndexSpec(names=['rangeName'], kinds=['string']),
     fields={
         'rangeName': EditorField("1.3.6.1.4.1.5468.100.38.1.2.7.1.0", "s"),   # VTSSDisplayString (SIZE(0..16))
         'startAddress': EditorField("1.3.6.1.4.1.5468.100.38.1.2.7.2.0", "x"),   # InetAddressIPv6
@@ -532,7 +544,7 @@ IPMC_PROFILE_CONFIG_MANAGEMENT_TABLE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.38.1.2.3.100.0",
     table_oid="1.3.6.1.4.1.5468.100.38.1.2.2",
     row_action_column_oid="1.3.6.1.4.1.5468.100.38.1.2.2.1.100",
-    index_spec=IndexSpec(names=['ml540mIpmcProfileConfigManagementProfileName'], kinds=['string']),
+    index_spec=IndexSpec(names=['profileName'], kinds=['string']),
     fields={
         'profileName': EditorField("1.3.6.1.4.1.5468.100.38.1.2.3.1.0", "s"),   # VTSSDisplayString (SIZE(0..16))
         'profileDescription': EditorField("1.3.6.1.4.1.5468.100.38.1.2.3.2.0", "s"),   # VTSSDisplayString (SIZE(0..64))
@@ -544,7 +556,7 @@ IPMC_PROFILE_CONFIG_RULE_TABLE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.38.1.2.9.100.0",
     table_oid="1.3.6.1.4.1.5468.100.38.1.2.8",
     row_action_column_oid="1.3.6.1.4.1.5468.100.38.1.2.8.1.100",
-    index_spec=IndexSpec(names=['ml540mIpmcProfileConfigRuleProfileName', 'ml540mIpmcProfileConfigRuleRuleRange'], kinds=['string', 'string']),
+    index_spec=IndexSpec(names=['profileName', 'ruleRange'], kinds=['string', 'string']),
     fields={
         'profileName': EditorField("1.3.6.1.4.1.5468.100.38.1.2.9.1.0", "s"),   # VTSSDisplayString (SIZE(0..16))
         'ruleRange': EditorField("1.3.6.1.4.1.5468.100.38.1.2.9.2.0", "s"),   # VTSSDisplayString (SIZE(0..16))
@@ -559,7 +571,7 @@ IPMC_SNOOPING_CONFIG_IGMP_INTERFACE_TABLE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.69.1.2.4.100.0",
     table_oid="1.3.6.1.4.1.5468.100.69.1.2.3",
     row_action_column_oid="1.3.6.1.4.1.5468.100.69.1.2.3.1.100",
-    index_spec=IndexSpec(names=['ml540mIpmcSnoopingConfigIgmpInterfaceIfIndex'], kinds=['integer']),
+    index_spec=IndexSpec(names=['ifIndex'], kinds=['integer']),
     fields={
         'ifIndex': EditorField("1.3.6.1.4.1.5468.100.69.1.2.4.1.0", "i"),   # VTSSInterfaceIndex
         'adminState': EditorField("1.3.6.1.4.1.5468.100.69.1.2.4.2.0", "i"),   # TruthValue
@@ -580,7 +592,7 @@ IPMC_SNOOPING_CONFIG_MLD_INTERFACE_TABLE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.69.1.2.8.100.0",
     table_oid="1.3.6.1.4.1.5468.100.69.1.2.7",
     row_action_column_oid="1.3.6.1.4.1.5468.100.69.1.2.7.1.100",
-    index_spec=IndexSpec(names=['ml540mIpmcSnoopingConfigMldInterfaceIfIndex'], kinds=['integer']),
+    index_spec=IndexSpec(names=['ifIndex'], kinds=['integer']),
     fields={
         'ifIndex': EditorField("1.3.6.1.4.1.5468.100.69.1.2.8.1.0", "i"),   # VTSSInterfaceIndex
         'adminState': EditorField("1.3.6.1.4.1.5468.100.69.1.2.8.2.0", "i"),   # TruthValue
@@ -600,7 +612,7 @@ JSON_RPC_NOTIFICATION_CONFIG_DESTINATION = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.129.1.2.2.100.0",
     table_oid="1.3.6.1.4.1.5468.100.129.1.2.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.129.1.2.1.1.100",
-    index_spec=IndexSpec(names=['Name'], kinds=['string']),
+    index_spec=IndexSpec(names=['name'], kinds=['string']),
     fields={
         'name': EditorField("1.3.6.1.4.1.5468.100.129.1.2.2.1.0", "s"),   # VTSSDisplayString (SIZE(0..16))
         'url': EditorField("1.3.6.1.4.1.5468.100.129.1.2.2.2.0", "s"),   # VTSSDisplayString (SIZE(0..254))
@@ -615,7 +627,7 @@ JSON_RPC_NOTIFICATION_CONFIG_NOTIFICATION = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.129.1.2.4.100.0",
     table_oid="1.3.6.1.4.1.5468.100.129.1.2.3",
     row_action_column_oid="1.3.6.1.4.1.5468.100.129.1.2.3.1.100",
-    index_spec=IndexSpec(names=['Destination', 'Notification'], kinds=['string', 'string']),
+    index_spec=IndexSpec(names=['destination', 'notification'], kinds=['string', 'string']),
     fields={
         'destination': EditorField("1.3.6.1.4.1.5468.100.129.1.2.4.1.0", "s"),   # VTSSDisplayString (SIZE(0..16))
         'notification': EditorField("1.3.6.1.4.1.5468.100.129.1.2.4.2.0", "s"),   # VTSSDisplayString (SIZE(0..96))
@@ -627,7 +639,7 @@ LLDP_CONFIG_MED_POLICY = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.34.1.2.3.6.100.0",
     table_oid="1.3.6.1.4.1.5468.100.34.1.2.3.2",
     row_action_column_oid="1.3.6.1.4.1.5468.100.34.1.2.3.2.1.100",
-    index_spec=IndexSpec(names=['LldpmedPolicy'], kinds=['integer']),
+    index_spec=IndexSpec(names=['lldpmedPolicy'], kinds=['integer']),
     fields={
         'lldpmedPolicy': EditorField("1.3.6.1.4.1.5468.100.34.1.2.3.6.1.0", "i"),   # Integer32 (0..31)
         'applicationType': EditorField("1.3.6.1.4.1.5468.100.34.1.2.3.6.3.0", "i"),   # VTSSlldpmedRemoteNetworkPolicyApplicationTyp
@@ -643,7 +655,7 @@ MAC_CONFIG_FDB_TABLE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.12.1.2.3.100.0",
     table_oid="1.3.6.1.4.1.5468.100.12.1.2.2",
     row_action_column_oid="1.3.6.1.4.1.5468.100.12.1.2.2.1.100",
-    index_spec=IndexSpec(names=['ml540mMacConfigFdbVlanId', 'ml540mMacConfigFdbMacAddress'], kinds=['integer', 'string']),
+    index_spec=IndexSpec(names=['vlanId', 'macAddress'], kinds=['integer', 'string']),
     fields={
         'vlanId': EditorField("1.3.6.1.4.1.5468.100.12.1.2.3.1.0", "u"),   # VTSSVlan
         'macAddress': EditorField("1.3.6.1.4.1.5468.100.12.1.2.3.2.0", "x"),   # MacAddress
@@ -656,7 +668,7 @@ MEP_CONFIG_AIS = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.46.1.2.10.2.101.0",
     table_oid="1.3.6.1.4.1.5468.100.46.1.2.10.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.46.1.2.10.1.1.101",
-    index_spec=IndexSpec(names=['Id'], kinds=['integer']),
+    index_spec=IndexSpec(names=['id'], kinds=['integer']),
     fields={
         'id': EditorField("1.3.6.1.4.1.5468.100.46.1.2.10.2.1.0", "i"),   # Integer32 (0..2147483647)
         'protection': EditorField("1.3.6.1.4.1.5468.100.46.1.2.10.2.2.0", "i"),   # TruthValue
@@ -669,7 +681,7 @@ MEP_CONFIG_APS = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.46.1.2.9.2.101.0",
     table_oid="1.3.6.1.4.1.5468.100.46.1.2.9.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.46.1.2.9.1.1.101",
-    index_spec=IndexSpec(names=['Id'], kinds=['integer']),
+    index_spec=IndexSpec(names=['id'], kinds=['integer']),
     fields={
         'id': EditorField("1.3.6.1.4.1.5468.100.46.1.2.9.2.1.0", "i"),   # Integer32 (0..2147483647)
         'prio': EditorField("1.3.6.1.4.1.5468.100.46.1.2.9.2.3.0", "u"),   # Unsigned32
@@ -684,7 +696,7 @@ MEP_CONFIG_BFD = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.46.1.2.15.2.100.0",
     table_oid="1.3.6.1.4.1.5468.100.46.1.2.15.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.46.1.2.15.1.1.100",
-    index_spec=IndexSpec(names=['Id'], kinds=['integer']),
+    index_spec=IndexSpec(names=['id'], kinds=['integer']),
     fields={
         'id': EditorField("1.3.6.1.4.1.5468.100.46.1.2.15.2.1.0", "i"),   # Integer32 (0..2147483647)
         'enable': EditorField("1.3.6.1.4.1.5468.100.46.1.2.15.2.2.0", "i"),   # TruthValue
@@ -703,7 +715,7 @@ MEP_CONFIG_BFD_AUTH = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.46.1.2.16.2.100.0",
     table_oid="1.3.6.1.4.1.5468.100.46.1.2.16.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.46.1.2.16.1.1.100",
-    index_spec=IndexSpec(names=['Id'], kinds=['integer']),
+    index_spec=IndexSpec(names=['id'], kinds=['integer']),
     fields={
         'id': EditorField("1.3.6.1.4.1.5468.100.46.1.2.16.2.1.0", "i"),   # Integer32 (0..2147483647)
         'keyType': EditorField("1.3.6.1.4.1.5468.100.46.1.2.16.2.2.0", "i"),   # VTSSMepBfdAuthenticationType
@@ -717,7 +729,7 @@ MEP_CONFIG_CC = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.46.1.2.3.2.100.0",
     table_oid="1.3.6.1.4.1.5468.100.46.1.2.3.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.46.1.2.3.1.1.100",
-    index_spec=IndexSpec(names=['Id'], kinds=['integer']),
+    index_spec=IndexSpec(names=['id'], kinds=['integer']),
     fields={
         'id': EditorField("1.3.6.1.4.1.5468.100.46.1.2.3.2.1.0", "i"),   # Integer32 (0..2147483647)
         'prio': EditorField("1.3.6.1.4.1.5468.100.46.1.2.3.2.3.0", "u"),   # Unsigned32
@@ -731,7 +743,7 @@ MEP_CONFIG_CLIENT_FLOW = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.46.1.2.12.3.100.0",
     table_oid="1.3.6.1.4.1.5468.100.46.1.2.12.2",
     row_action_column_oid="1.3.6.1.4.1.5468.100.46.1.2.12.2.1.100",
-    index_spec=IndexSpec(names=['Id', 'FlowId'], kinds=['integer', 'integer']),
+    index_spec=IndexSpec(names=['id', 'flowId'], kinds=['integer', 'integer']),
     fields={
         'id': EditorField("1.3.6.1.4.1.5468.100.46.1.2.12.3.1.0", "i"),   # Integer32 (0..2147483647)
         'flowId': EditorField("1.3.6.1.4.1.5468.100.46.1.2.12.3.2.0", "i"),   # VTSSInterfaceIndex
@@ -746,7 +758,7 @@ MEP_CONFIG_INSTANCE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.46.1.2.1.2.100.0",
     table_oid="1.3.6.1.4.1.5468.100.46.1.2.1.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.46.1.2.1.1.1.100",
-    index_spec=IndexSpec(names=['Id'], kinds=['integer']),
+    index_spec=IndexSpec(names=['id'], kinds=['integer']),
     fields={
         'id': EditorField("1.3.6.1.4.1.5468.100.46.1.2.1.2.1.0", "i"),   # Integer32 (0..2147483647)
         'mode': EditorField("1.3.6.1.4.1.5468.100.46.1.2.1.2.2.0", "i"),   # VTSSMepInstanceMode
@@ -771,7 +783,7 @@ MEP_CONFIG_INSTANCE_PEER = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.46.1.2.1.4.100.0",
     table_oid="1.3.6.1.4.1.5468.100.46.1.2.1.3",
     row_action_column_oid="1.3.6.1.4.1.5468.100.46.1.2.1.3.1.100",
-    index_spec=IndexSpec(names=['Id', 'PeerId'], kinds=['integer', 'integer']),
+    index_spec=IndexSpec(names=['id', 'peerId'], kinds=['integer', 'integer']),
     fields={
         'id': EditorField("1.3.6.1.4.1.5468.100.46.1.2.1.4.1.0", "i"),   # Integer32 (0..2147483647)
         'peerId': EditorField("1.3.6.1.4.1.5468.100.46.1.2.1.4.2.0", "i"),   # Integer32 (0..2147483647)
@@ -784,7 +796,7 @@ MEP_CONFIG_LB = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.46.1.2.6.2.101.0",
     table_oid="1.3.6.1.4.1.5468.100.46.1.2.6.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.46.1.2.6.1.1.101",
-    index_spec=IndexSpec(names=['Id'], kinds=['integer']),
+    index_spec=IndexSpec(names=['id'], kinds=['integer']),
     fields={
         'id': EditorField("1.3.6.1.4.1.5468.100.46.1.2.6.2.1.0", "i"),   # Integer32 (0..2147483647)
         'dei': EditorField("1.3.6.1.4.1.5468.100.46.1.2.6.2.2.0", "i"),   # TruthValue
@@ -804,7 +816,7 @@ MEP_CONFIG_LCK = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.46.1.2.11.2.101.0",
     table_oid="1.3.6.1.4.1.5468.100.46.1.2.11.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.46.1.2.11.1.1.101",
-    index_spec=IndexSpec(names=['Id'], kinds=['integer']),
+    index_spec=IndexSpec(names=['id'], kinds=['integer']),
     fields={
         'id': EditorField("1.3.6.1.4.1.5468.100.46.1.2.11.2.1.0", "i"),   # Integer32 (0..2147483647)
         'rate': EditorField("1.3.6.1.4.1.5468.100.46.1.2.11.2.2.0", "i"),   # VTSSMepTxRate
@@ -816,7 +828,7 @@ MEP_CONFIG_LT = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.46.1.2.8.2.101.0",
     table_oid="1.3.6.1.4.1.5468.100.46.1.2.8.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.46.1.2.8.1.1.101",
-    index_spec=IndexSpec(names=['Id'], kinds=['integer']),
+    index_spec=IndexSpec(names=['id'], kinds=['integer']),
     fields={
         'id': EditorField("1.3.6.1.4.1.5468.100.46.1.2.8.2.1.0", "i"),   # Integer32 (0..2147483647)
         'prio': EditorField("1.3.6.1.4.1.5468.100.46.1.2.8.2.3.0", "u"),   # Unsigned32
@@ -831,7 +843,7 @@ MEP_CONFIG_RT = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.46.1.2.17.2.100.0",
     table_oid="1.3.6.1.4.1.5468.100.46.1.2.17.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.46.1.2.17.1.1.100",
-    index_spec=IndexSpec(names=['Id'], kinds=['integer']),
+    index_spec=IndexSpec(names=['id'], kinds=['integer']),
     fields={
         'id': EditorField("1.3.6.1.4.1.5468.100.46.1.2.17.2.1.0", "i"),   # Integer32 (0..2147483647)
         'trafficClass': EditorField("1.3.6.1.4.1.5468.100.46.1.2.17.2.2.0", "u"),   # VTSSUnsigned8
@@ -849,7 +861,7 @@ MEP_CONFIG_TST = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.46.1.2.7.2.101.0",
     table_oid="1.3.6.1.4.1.5468.100.46.1.2.7.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.46.1.2.7.1.1.101",
-    index_spec=IndexSpec(names=['Id'], kinds=['integer']),
+    index_spec=IndexSpec(names=['id'], kinds=['integer']),
     fields={
         'id': EditorField("1.3.6.1.4.1.5468.100.46.1.2.7.2.1.0", "i"),   # Integer32 (0..2147483647)
         'txEnable': EditorField("1.3.6.1.4.1.5468.100.46.1.2.7.2.2.0", "i"),   # TruthValue
@@ -869,7 +881,7 @@ MPLS_CONFIG_COS_MAP = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.127.1.2.6.2.100.0",
     table_oid="1.3.6.1.4.1.5468.100.127.1.2.6.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.127.1.2.6.1.1.100",
-    index_spec=IndexSpec(names=['GroupIndex'], kinds=['integer']),
+    index_spec=IndexSpec(names=['groupIndex'], kinds=['integer']),
     fields={
         'groupIndex': EditorField("1.3.6.1.4.1.5468.100.127.1.2.6.2.1.0", "i"),   # Integer32 (0..2147483647)
         'inTcToCos0': EditorField("1.3.6.1.4.1.5468.100.127.1.2.6.2.10.0", "u"),   # VTSSUnsigned8 (0..7)
@@ -912,7 +924,7 @@ MPLS_CONFIG_LINK = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.127.1.2.2.2.100.0",
     table_oid="1.3.6.1.4.1.5468.100.127.1.2.2.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.127.1.2.2.1.1.100",
-    index_spec=IndexSpec(names=['GroupIfIndex'], kinds=['integer']),
+    index_spec=IndexSpec(names=['groupIfIndex'], kinds=['integer']),
     fields={
         'groupIfIndex': EditorField("1.3.6.1.4.1.5468.100.127.1.2.2.2.1.0", "i"),   # VTSSInterfaceIndex
         'port': EditorField("1.3.6.1.4.1.5468.100.127.1.2.2.2.2.0", "i"),   # VTSSInterfaceIndex
@@ -938,7 +950,7 @@ MPLS_CONFIG_LSP = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.127.1.2.4.2.100.0",
     table_oid="1.3.6.1.4.1.5468.100.127.1.2.4.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.127.1.2.4.1.1.100",
-    index_spec=IndexSpec(names=['GroupIndex'], kinds=['integer']),
+    index_spec=IndexSpec(names=['groupIndex'], kinds=['integer']),
     fields={
         'groupIndex': EditorField("1.3.6.1.4.1.5468.100.127.1.2.4.2.1.0", "i"),   # Integer32 (0..2147483647)
         'xcName': EditorField("1.3.6.1.4.1.5468.100.127.1.2.4.2.2.0", "s"),   # VTSSDisplayString (SIZE(0..31))
@@ -977,7 +989,7 @@ MPLS_CONFIG_PW = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.127.1.2.5.2.100.0",
     table_oid="1.3.6.1.4.1.5468.100.127.1.2.5.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.127.1.2.5.1.1.100",
-    index_spec=IndexSpec(names=['GroupIfIndex'], kinds=['integer']),
+    index_spec=IndexSpec(names=['groupIfIndex'], kinds=['integer']),
     fields={
         'groupIfIndex': EditorField("1.3.6.1.4.1.5468.100.127.1.2.5.2.1.0", "i"),   # VTSSInterfaceIndex
         'inLabel': EditorField("1.3.6.1.4.1.5468.100.127.1.2.5.2.2.0", "u"),   # Unsigned32 (16..1048575)
@@ -1018,7 +1030,7 @@ MPLS_CONFIG_TUNNEL = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.127.1.2.3.2.100.0",
     table_oid="1.3.6.1.4.1.5468.100.127.1.2.3.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.127.1.2.3.1.1.100",
-    index_spec=IndexSpec(names=['GroupIfIndex'], kinds=['integer']),
+    index_spec=IndexSpec(names=['groupIfIndex'], kinds=['integer']),
     fields={
         'groupIfIndex': EditorField("1.3.6.1.4.1.5468.100.127.1.2.3.2.1.0", "i"),   # VTSSInterfaceIndex
         'tunnelName': EditorField("1.3.6.1.4.1.5468.100.127.1.2.3.2.2.0", "s"),   # VTSSDisplayString (SIZE(0..31))
@@ -1052,7 +1064,7 @@ PTP_CONFIG_CLOCKS_DEFAULT_DS_TABLE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.65.1.2.2.2.100.0",
     table_oid="1.3.6.1.4.1.5468.100.65.1.2.2.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.65.1.2.2.1.1.100",
-    index_spec=IndexSpec(names=['ml540mPtpConfigClocksDefaultDsClockId'], kinds=['integer']),
+    index_spec=IndexSpec(names=['clockId'], kinds=['integer']),
     fields={
         'clockId': EditorField("1.3.6.1.4.1.5468.100.65.1.2.2.2.1.0", "i"),   # Integer32 (0..32767)
         'deviceType': EditorField("1.3.6.1.4.1.5468.100.65.1.2.2.2.2.0", "u"),   # VTSSUnsigned8
@@ -1074,7 +1086,7 @@ PVLAN_CONFIG_INTERFACE_VLAN_MEMBERSHIP_TABLE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.23.1.2.1.2.100.0",
     table_oid="1.3.6.1.4.1.5468.100.23.1.2.1.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.23.1.2.1.1.1.100",
-    index_spec=IndexSpec(names=['ml540mPvlanConfigInterfaceVlanMembershipPvlanIndex'], kinds=['integer']),
+    index_spec=IndexSpec(names=['pvlanIndex'], kinds=['integer']),
     fields={
         'pvlanIndex': EditorField("1.3.6.1.4.1.5468.100.23.1.2.1.2.1.0", "u"),   # Unsigned32
         'portList': EditorField("1.3.6.1.4.1.5468.100.23.1.2.1.2.2.0", "s"),   # VTSSPortList
@@ -1086,7 +1098,7 @@ QOS_CONFIG_QCE_TABLE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.14.1.2.3.2.10000.0",
     table_oid="1.3.6.1.4.1.5468.100.14.1.2.3.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.14.1.2.3.1.1.10000",
-    index_spec=IndexSpec(names=['ml540mQosConfigQceQceId'], kinds=['integer']),
+    index_spec=IndexSpec(names=['qceId'], kinds=['integer']),
     fields={
         'qceId': EditorField("1.3.6.1.4.1.5468.100.14.1.2.3.2.1.0", "i"),   # Integer32 (0..2147483647)
         'nextQceId': EditorField("1.3.6.1.4.1.5468.100.14.1.2.3.2.2.0", "u"),   # Unsigned32
@@ -1169,7 +1181,7 @@ SNMP_CONFIG_ACCESS_GROUP_TABLE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.36.1.2.9.100.0",
     table_oid="1.3.6.1.4.1.5468.100.36.1.2.8",
     row_action_column_oid="1.3.6.1.4.1.5468.100.36.1.2.8.1.100",
-    index_spec=IndexSpec(names=['ml540mSnmpConfigAccessGroupAccessGroupName', 'ml540mSnmpConfigAccessGroupSecurityModel', 'ml540mSnmpConfigAccessGroupSecurityLevel'], kinds=['string', 'integer', 'integer']),
+    index_spec=IndexSpec(names=['accessGroupName', 'securityModel', 'securityLevel'], kinds=['string', 'integer', 'integer']),
     fields={
         'accessGroupName': EditorField("1.3.6.1.4.1.5468.100.36.1.2.9.1.0", "s"),   # VTSSDisplayString (SIZE(0..32))
         'securityModel': EditorField("1.3.6.1.4.1.5468.100.36.1.2.9.2.0", "i"),   # VTSSSnmpSecurityModel
@@ -1184,7 +1196,7 @@ SNMP_CONFIG_COMMUNITY_TABLE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.36.1.2.3.100.0",
     table_oid="1.3.6.1.4.1.5468.100.36.1.2.2",
     row_action_column_oid="1.3.6.1.4.1.5468.100.36.1.2.2.1.100",
-    index_spec=IndexSpec(names=['ml540mSnmpConfigCommunityName', 'ml540mSnmpConfigCommunitySourceIP', 'ml540mSnmpConfigCommunitySourceIPPrefixSize'], kinds=['string', 'ipaddress', 'integer']),
+    index_spec=IndexSpec(names=['name', 'sourceIP', 'sourceIPPrefixSize'], kinds=['string', 'ipaddress', 'integer']),
     fields={
         'name': EditorField("1.3.6.1.4.1.5468.100.36.1.2.3.1.0", "s"),   # VTSSDisplayString (SIZE(0..32))
         'sourceIP': EditorField("1.3.6.1.4.1.5468.100.36.1.2.3.2.0", "a"),   # IpAddress
@@ -1197,7 +1209,7 @@ SNMP_CONFIG_USER_TABLE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.36.1.2.5.100.0",
     table_oid="1.3.6.1.4.1.5468.100.36.1.2.4",
     row_action_column_oid="1.3.6.1.4.1.5468.100.36.1.2.4.1.100",
-    index_spec=IndexSpec(names=['ml540mSnmpConfigUserEngineId', 'ml540mSnmpConfigUserUserName'], kinds=['string', 'string']),
+    index_spec=IndexSpec(names=['engineId', 'userName'], kinds=['string', 'string']),
     fields={
         'engineId': EditorField("1.3.6.1.4.1.5468.100.36.1.2.5.1.0", "s"),   # OCTET STRING (SIZE(5..32))
         'userName': EditorField("1.3.6.1.4.1.5468.100.36.1.2.5.2.0", "s"),   # VTSSDisplayString (SIZE(0..32))
@@ -1214,7 +1226,7 @@ SNMP_CONFIG_USER_TO_ACCESS_GROUP_TABLE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.36.1.2.7.100.0",
     table_oid="1.3.6.1.4.1.5468.100.36.1.2.6",
     row_action_column_oid="1.3.6.1.4.1.5468.100.36.1.2.6.1.100",
-    index_spec=IndexSpec(names=['ml540mSnmpConfigUserToAccessGroupSecurityModel', 'ml540mSnmpConfigUserToAccessGroupUserOrCommunity'], kinds=['integer', 'string']),
+    index_spec=IndexSpec(names=['securityModel', 'userOrCommunity'], kinds=['integer', 'string']),
     fields={
         'securityModel': EditorField("1.3.6.1.4.1.5468.100.36.1.2.7.1.0", "i"),   # VTSSSnmpSecurityModel
         'userOrCommunity': EditorField("1.3.6.1.4.1.5468.100.36.1.2.7.2.0", "s"),   # VTSSDisplayString (SIZE(0..32))
@@ -1227,7 +1239,7 @@ SNMP_CONFIG_VIEW_TABLE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.36.1.2.11.100.0",
     table_oid="1.3.6.1.4.1.5468.100.36.1.2.10",
     row_action_column_oid="1.3.6.1.4.1.5468.100.36.1.2.10.1.100",
-    index_spec=IndexSpec(names=['ml540mSnmpConfigViewName', 'ml540mSnmpConfigViewSubtree'], kinds=['string', 'string']),
+    index_spec=IndexSpec(names=['name', 'subtree'], kinds=['string', 'string']),
     fields={
         'name': EditorField("1.3.6.1.4.1.5468.100.36.1.2.11.1.0", "s"),   # VTSSDisplayString (SIZE(0..32))
         'subtree': EditorField("1.3.6.1.4.1.5468.100.36.1.2.11.2.0", "s"),   # VTSSDisplayString (SIZE(0..64))
@@ -1240,7 +1252,7 @@ TT_LOOP_CONFIG_INSTANCE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.128.1.2.2.100.0",
     table_oid="1.3.6.1.4.1.5468.100.128.1.2.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.128.1.2.1.1.100",
-    index_spec=IndexSpec(names=['Id'], kinds=['integer']),
+    index_spec=IndexSpec(names=['id'], kinds=['integer']),
     fields={
         'id': EditorField("1.3.6.1.4.1.5468.100.128.1.2.2.1.0", "i"),   # Integer32 (0..2147483647)
         'name': EditorField("1.3.6.1.4.1.5468.100.128.1.2.2.2.0", "s"),   # VTSSDisplayString (SIZE(0..32))
@@ -1259,7 +1271,7 @@ USERS_CONFIG_TABLE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.58.1.2.2.100.0",
     table_oid="1.3.6.1.4.1.5468.100.58.1.2.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.58.1.2.1.1.100",
-    index_spec=IndexSpec(names=['ml540mUsersConfigUsername'], kinds=['string']),
+    index_spec=IndexSpec(names=['username'], kinds=['string']),
     fields={
         'username': EditorField("1.3.6.1.4.1.5468.100.58.1.2.2.1.0", "s"),   # VTSSDisplayString (SIZE(0..31))
         'privilege': EditorField("1.3.6.1.4.1.5468.100.58.1.2.2.2.0", "u"),   # Unsigned32
@@ -1273,7 +1285,7 @@ VCL_CONFIG_IP = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.79.1.2.2.2.100.0",
     table_oid="1.3.6.1.4.1.5468.100.79.1.2.2.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.79.1.2.2.1.1.100",
-    index_spec=IndexSpec(names=['IpSubnetAddress', 'IpSubnetMaskLength'], kinds=['ipaddress', 'integer']),
+    index_spec=IndexSpec(names=['ipSubnetAddress', 'ipSubnetMaskLength'], kinds=['ipaddress', 'integer']),
     fields={
         'ipSubnetAddress': EditorField("1.3.6.1.4.1.5468.100.79.1.2.2.2.1.0", "a"),   # IpAddress
         'ipSubnetMaskLength': EditorField("1.3.6.1.4.1.5468.100.79.1.2.2.2.2.0", "i"),   # Integer32 (1..32)
@@ -1287,7 +1299,7 @@ VCL_CONFIG_MAC = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.79.1.2.1.2.100.0",
     table_oid="1.3.6.1.4.1.5468.100.79.1.2.1.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.79.1.2.1.1.1.100",
-    index_spec=IndexSpec(names=['MacAddress'], kinds=['string']),
+    index_spec=IndexSpec(names=['macAddress'], kinds=['string']),
     fields={
         'macAddress': EditorField("1.3.6.1.4.1.5468.100.79.1.2.1.2.1.0", "x"),   # MacAddress
         'vlanId': EditorField("1.3.6.1.4.1.5468.100.79.1.2.1.2.2.0", "i"),   # Integer32 (1..4095)
@@ -1300,7 +1312,7 @@ VCL_CONFIG_PROTOCOL_GROUP = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.79.1.2.3.2.2.100.0",
     table_oid="1.3.6.1.4.1.5468.100.79.1.2.3.2.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.79.1.2.3.2.1.1.100",
-    index_spec=IndexSpec(names=['ProtocolGroupName'], kinds=['string']),
+    index_spec=IndexSpec(names=['protocolGroupName'], kinds=['string']),
     fields={
         'protocolGroupName': EditorField("1.3.6.1.4.1.5468.100.79.1.2.3.2.2.1.0", "s"),   # VTSSDisplayString (SIZE(0..16))
         'vlanId': EditorField("1.3.6.1.4.1.5468.100.79.1.2.3.2.2.2.0", "i"),   # Integer32 (1..4095)
@@ -1313,7 +1325,7 @@ VCL_CONFIG_PROTOCOL_PROTO = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.79.1.2.3.1.2.100.0",
     table_oid="1.3.6.1.4.1.5468.100.79.1.2.3.1.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.79.1.2.3.1.1.1.100",
-    index_spec=IndexSpec(names=['ProtocolEncapsulation'], kinds=['string']),
+    index_spec=IndexSpec(names=['protocolEncapsulation'], kinds=['string']),
     fields={
         'protocolEncapsulation': EditorField("1.3.6.1.4.1.5468.100.79.1.2.3.1.2.1.0", "s"),   # VTSSVclProtoEncap
         'protocolGroupName': EditorField("1.3.6.1.4.1.5468.100.79.1.2.3.1.2.2.0", "s"),   # VTSSDisplayString (SIZE(0..16))
@@ -1325,7 +1337,7 @@ VLAN_CONFIG_INTERFACES_SVL_TABLE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.13.1.2.2.3.100.0",
     table_oid="1.3.6.1.4.1.5468.100.13.1.2.2.2",
     row_action_column_oid="1.3.6.1.4.1.5468.100.13.1.2.2.2.1.100",
-    index_spec=IndexSpec(names=['ml540mVlanConfigInterfacesSvlVlanId'], kinds=['integer']),
+    index_spec=IndexSpec(names=['vlanId'], kinds=['integer']),
     fields={
         'vlanId': EditorField("1.3.6.1.4.1.5468.100.13.1.2.2.3.1.0", "u"),   # VTSSVlan
         'filterId': EditorField("1.3.6.1.4.1.5468.100.13.1.2.2.3.2.0", "u"),   # VTSSUnsigned16
@@ -1337,7 +1349,7 @@ VLAN_TRANSLATION_CONFIG_TRANSLATION = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.85.1.2.1.2.100.0",
     table_oid="1.3.6.1.4.1.5468.100.85.1.2.1.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.85.1.2.1.1.1.100",
-    index_spec=IndexSpec(names=['GroupId', 'VlanId'], kinds=['integer', 'integer']),
+    index_spec=IndexSpec(names=['groupId', 'vlanId'], kinds=['integer', 'integer']),
     fields={
         'groupId': EditorField("1.3.6.1.4.1.5468.100.85.1.2.1.2.1.0", "i"),   # Integer32 (1..65535)
         'vlanId': EditorField("1.3.6.1.4.1.5468.100.85.1.2.1.2.2.0", "i"),   # Integer32 (1..4095)
@@ -1350,7 +1362,7 @@ VOICE_VLAN_CONFIG_OUI_TABLE = RowEditorSpec(
     action_oid="1.3.6.1.4.1.5468.100.70.1.2.3.2.100.0",
     table_oid="1.3.6.1.4.1.5468.100.70.1.2.3.1",
     row_action_column_oid="1.3.6.1.4.1.5468.100.70.1.2.3.1.1.100",
-    index_spec=IndexSpec(names=['ml540mVoiceVlanConfigOuiPrefix'], kinds=['string']),
+    index_spec=IndexSpec(names=['prefix'], kinds=['string']),
     fields={
         'prefix': EditorField("1.3.6.1.4.1.5468.100.70.1.2.3.2.1.0", "s"),   # OCTET STRING (SIZE(3..3))
         'description': EditorField("1.3.6.1.4.1.5468.100.70.1.2.3.2.2.0", "s"),   # VTSSDisplayString (SIZE(0..32))
@@ -1365,6 +1377,7 @@ ALL_SPECS = {s.name: s for s in [
     ARP_INSPECTION_CONFIG_STATIC_TABLE,
     ARP_INSPECTION_CONFIG_VLAN_TABLE,
     DHCP6_CLIENT_CONFIG_INTERFACE_TABLE,
+    DHCP_SERVER_CONFIG_EXCLUDED_IP_TABLE,
     DHCP_SERVER_CONFIG_POOL_TABLE,
     EPS_CONFIG_INSTANCE,
     ERPS_CONFIG,

@@ -22,7 +22,7 @@ from datetime import datetime, UTC
 
 from ..model import alarms as am
 from ..model import tables, units
-from ..model.alarms import Alarm, AlarmState, Severity
+from ..model.alarms import Alarm, AlarmState, Severity, parse_severity
 from ..snmp.backend import SnmpBackend, SnmpTarget
 from ..snmp.errors import SnmpNoSuchObject
 from ..snmp.oid import rows_from_columns
@@ -91,8 +91,8 @@ def observe_alarms_switch(backend: SnmpBackend, target: SnmpTarget,
         key = f"switch:{type_key}:{entity}" if entity else f"switch:{type_key}"
 
         cleared = raw_state in am.SWITCH_ALARM_STATE_CLEARED
-        severity = (Severity.CLEARED if cleared else
-                    Severity(level_row.nsp_severity) if level_row else Severity.INDETERMINATE)
+        severity = (Severity.CLEARED if cleared
+                    else parse_severity(level_row.nsp_severity if level_row else None))
 
         out.append(Alarm(
             key=key, severity=severity,
@@ -130,7 +130,7 @@ def observe_alarms_dsl(backend: SnmpBackend, target: SnmpTarget,
         # alarmIndex is a table slot and is not stable across clears.
         out.append(Alarm(
             key=f"dsl:{aid}:{name}" if aid else f"dsl:{name}",
-            severity=Severity(sev_row.nsp_severity) if sev_row else Severity.INDETERMINATE,
+            severity=parse_severity(sev_row.nsp_severity if sev_row else None),
             probable_cause=(name_row.nsp_probable_cause if name_row else name),
             source_value=severity_raw, entity=aid,
             service_affecting=(sa_raw.upper() == "SA" if sa_raw else None),

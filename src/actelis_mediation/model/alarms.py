@@ -25,9 +25,12 @@ single-point swap once confirmed.
 """
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass, field
 from enum import Enum
 from collections.abc import Iterable
+
+logger = logging.getLogger(__name__)
 
 
 class Severity(str, Enum):  # noqa: UP042 - str+Enum keeps 3.11 compat
@@ -37,6 +40,34 @@ class Severity(str, Enum):  # noqa: UP042 - str+Enum keeps 3.11 compat
     WARNING = "Warning"
     INDETERMINATE = "Indeterminate"
     CLEARED = "Cleared"
+
+
+#: Some mapping-table rows carry a cross-reference in `nsp_severity` rather
+#: than a severity -- e.g. "(see alarmSeverity CR/MJ/MN/NA mapping above)" for
+#: alarm-NAME rows, whose severity comes from the severity column of the same
+#: device alarm, not from the name. That is a reasonable authoring convention
+#: but it means the column is not uniformly a severity, and calling
+#: ``Severity(value)`` on it raises. Found by the FCAPS fault suite.
+CROSS_REFERENCE_PREFIX = "("
+
+
+def parse_severity(value: str | None, default: Severity | None = None) -> Severity:
+    """Parse a mapping-table severity, never raising.
+
+    Returns ``default`` (or ``INDETERMINATE``) for an empty value, a
+    cross-reference placeholder, or anything not in the model. An unparseable
+    severity must degrade to Indeterminate, not take down a polling cycle.
+    """
+    fallback = default if default is not None else Severity.INDETERMINATE
+    v = (value or "").strip()
+    if not v or v.startswith(CROSS_REFERENCE_PREFIX):
+        return fallback
+    try:
+        return Severity(v)
+    except ValueError:
+        logger.warning("alarm mapping: %r is not a severity in the NSP model; "
+                       "treating as %s", v, fallback.value)
+        return fallback
 
 
 class Transition(str, Enum):  # noqa: UP042

@@ -31,7 +31,8 @@ import sys
 from dataclasses import dataclass
 from datetime import datetime, UTC
 
-from ..model.alarms import Alarm, Severity, normalise_switch_alarm_type, strip_enum_label
+from ..model.alarms import (Alarm, Severity, normalise_switch_alarm_type,
+                            parse_severity, strip_enum_label)
 from ..poll import oids
 from ..poll.mapping import AlarmMapping
 
@@ -105,7 +106,7 @@ def trap_to_alarm(trap: DecodedTrap, mapping: AlarmMapping) -> Alarm | None:
         sev = mapping.lookup("dsl-modem", severity_raw)
         name_row = mapping.lookup("dsl-modem", name)
         return Alarm(key=f"dsl:{aid}:{name}" if aid else f"dsl:{name}",
-                     severity=Severity(sev.nsp_severity) if sev else Severity.INDETERMINATE,
+                     severity=parse_severity(sev.nsp_severity if sev else None),
                      probable_cause=name_row.nsp_probable_cause if name_row else name,
                      source_value=severity_raw, entity=aid,
                      service_affecting=(sa.upper() == "SA" if sa else None),
@@ -126,9 +127,8 @@ def trap_to_alarm(trap: DecodedTrap, mapping: AlarmMapping) -> Alarm | None:
         level_row = mapping.lookup("switch", level_raw)
         type_row = mapping.lookup("switch", type_key)
         return Alarm(key=f"switch:{type_key}:{entity}" if entity else f"switch:{type_key}",
-                     severity=(Severity.CLEARED if cleared else
-                               Severity(level_row.nsp_severity) if level_row
-                               else Severity.INDETERMINATE),
+                     severity=(Severity.CLEARED if cleared
+                               else parse_severity(level_row.nsp_severity if level_row else None)),
                      probable_cause=type_row.nsp_probable_cause if type_row else type_key,
                      source_value=level_raw, entity=entity,
                      raw=f"trap {oid} level={level_raw} state={state_raw}")
@@ -142,9 +142,8 @@ def trap_to_alarm(trap: DecodedTrap, mapping: AlarmMapping) -> Alarm | None:
         else:
             return None
         level_row = mapping.lookup("switch", level_raw)
-        return Alarm(key=f"switch-event:{oid}", severity=(
-                         Severity(level_row.nsp_severity) if level_row
-                         else Severity.INDETERMINATE),
+        return Alarm(key=f"switch-event:{oid}",
+                     severity=parse_severity(level_row.nsp_severity if level_row else None),
                      probable_cause=message or oid, source_value=level_raw, raw=message)
 
     logger.debug("unrecognised trap OID %s from %s", oid, trap.host)

@@ -50,6 +50,7 @@ from .backend import SnmpTarget, VarBind
 from .errors import (SnmpAuthorization, SnmpBadValue, SnmpError,
                      SnmpNoSuchObject, SnmpTimeout, SnmpToolMissing)
 from .oid import normalize
+from .redact import redact_args, redact_text
 
 logger = logging.getLogger(__name__)
 
@@ -94,7 +95,11 @@ class NetSnmpBackend:
     # -- process plumbing ---------------------------------------------------
 
     def _run(self, args: list[str], *, timeout_s: float,
-             env: dict[str, str] | None = None) -> str:
+             env: dict[str, str] | None = None,
+             secrets: list[str] | None = None) -> str:
+        """Run a net-snmp tool. Every error path is redacted: the community
+        string must never reach a log record or a traceback."""
+        safe_cmd = redact_args(args)
         try:
             proc = subprocess.run(args, capture_output=True, text=True,
                                   timeout=timeout_s, check=False, env=env)
@@ -103,17 +108,26 @@ class NetSnmpBackend:
                 f"{args[0]} not found -- install net-snmp (same requirement as "
                 f"tools/lab/validate_snmp_switch.sh)") from exc
         except subprocess.TimeoutExpired as exc:
-            raise SnmpTimeout(f"{args[0]} exceeded {timeout_s}s") from exc
+            # TimeoutExpired stringifies its own argv, which holds the
+            # community string. `from None` only suppresses *display* of the
+            # context -- the object is still reachable as __context__ and
+            # anything that logs it leaks the credential. So scrub the
+            # exception itself before letting it become our context.
+            exc.cmd = safe_cmd
+            exc.output = None
+            exc.stderr = None
+            raise SnmpTimeout(f"{safe_cmd} exceeded {timeout_s}s") from None
 
         output = (proc.stdout or "") + (proc.stderr or "")
+        safe_out = redact_text(output, secrets).strip()
         if _TIMEOUT_RE.search(output):
-            raise SnmpTimeout(f"no response from device: {output.strip()[:300]}")
+            raise SnmpTimeout(f"no response from device: {safe_out[:300]}")
         if _AUTH_RE.search(output):
-            raise SnmpAuthorization(f"agent refused the request: {output.strip()[:300]}")
+            raise SnmpAuthorization(f"agent refused the request: {safe_out[:300]}")
         if _BADVAL_RE.search(output):
-            raise SnmpBadValue(output.strip()[:400])
+            raise SnmpBadValue(safe_out[:400])
         if proc.returncode != 0 and not proc.stdout.strip():
-            raise SnmpError(f"{args[0]} failed ({proc.returncode}): {output.strip()[:300]}")
+            raise SnmpError(f"{safe_cmd} failed ({proc.returncode}): {safe_out[:300]}")
         return proc.stdout
 
     def _retrying(self, fn, *, retries: int, what: str):
@@ -180,7 +194,8 @@ class NetSnmpBackend:
                  f"{target.host}:{target.port}", *oids])
 
         def once() -> dict[str, VarBind]:
-            out = self._run(args, timeout_s=_budget(target, len(oids)), env=env)
+            out = self._run(args, timeout_s=_budget(target, len(oids)), env=env,
+                            secrets=[target.ro_community])
             found, missing = self._parse(out)
             if not found and missing:
                 raise SnmpNoSuchObject(
@@ -202,7 +217,8 @@ class NetSnmpBackend:
         args += [f"{target.host}:{target.port}", base_oid]
 
         def once() -> dict[str, VarBind]:
-            out = self._run(args, timeout_s=target.walk_timeout_s, env=env)
+            out = self._run(args, timeout_s=target.walk_timeout_s, env=env,
+                            secrets=[target.ro_community])
             found, missing = self._parse(out)
             if not found:
                 raise SnmpNoSuchObject(
@@ -220,7 +236,9 @@ class NetSnmpBackend:
             args += [oid, type_char, value]
 
         def once() -> dict[str, VarBind]:
-            found, _ = self._parse(self._run(args, timeout_s=_budget(target, len(binds)), env=env))
+            found, _ = self._parse(self._run(
+                args, timeout_s=_budget(target, len(binds)), env=env,
+                secrets=[target.rw_community or ""]))
             return found
 
         # A SET is not idempotent in general; retry only the transport-level

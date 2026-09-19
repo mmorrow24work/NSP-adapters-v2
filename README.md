@@ -21,6 +21,55 @@ vendor MIB text, and a standalone Python Communicator prototype polls both
 families and stores normalised data. NSP/SDK access is the current gate:
 everything past "build the Device Model in NSP's actual schema" waits on it.
 
+## Architecture
+
+```mermaid
+flowchart LR
+    subgraph NSP["Nokia NSP"]
+        FM["Fault Management"]
+        PM["Performance Manager"]
+        INV["Inventory"]
+    end
+
+    subgraph ADAPTOR["MDM adaptor — one per device type"]
+        DISC["Discovery adaptor"]
+        DMODEL["Device Model"]
+        COMM["Communicator"]
+    end
+
+    subgraph DEVICES["Actelis estate"]
+        SW["ML540M switch<br/>1.3.6.1.4.1.5468.100"]
+        ML600["ML600 family EAD/DSL<br/>ML620R · ML622 · ML684"]
+    end
+
+    EMS["Actelis MetaAssist EMS<br/>northbound OSS interface<br/>1.3.6.1.4.1.5468.9.1"]
+
+    FM --- ADAPTOR
+    PM --- ADAPTOR
+    INV --- ADAPTOR
+    DISC --> DMODEL
+    DMODEL --> COMM
+    COMM -->|"SNMP: get / walk / set / traps"| SW
+    COMM -->|"SNMP: get / walk / set / traps"| ML600
+    COMM -.->|"under evaluation:<br/>alarm correlation + topology"| EMS
+    EMS -.- SW
+    EMS -.- ML600
+
+    classDef nsp fill:#dbeafe,stroke:#2563eb,color:#0f172a
+    classDef adp fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    classDef dev fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef alt fill:#f1f5f9,stroke:#94a3b8,color:#334155,stroke-dasharray:4 3
+    class FM,PM,INV nsp
+    class DISC,DMODEL,COMM adp
+    class SW,ML600 dev
+    class EMS alt
+```
+
+Solid lines are the decided path — direct SNMP to each device, no EMS
+dependency. The dashed path is the EMS northbound interface the original
+decision never examined; it is now an evaluation item, not a rejection.
+See [ADR-0001](docs/adr/0001-direct-snmp-vs-ems.md).
+
 ## Scope
 
 | Device type | Products | OID root | Role |
@@ -101,6 +150,12 @@ MIB. See [`docs/mib-analysis/units-resolved.md`](docs/mib-analysis/units-resolve
   more rows.
 * **Credentials out of the repo**, resolved from environment variables, with
   an opt-in mode that keeps the community string off the process command line.
+* **An executable FCAPS acceptance suite** — 63 tests across Fault,
+  Configuration, Accounting, Performance and Security, written as acceptance
+  criteria rather than unit tests, and runnable both offline and against a
+  real device. It turns `docs/fcaps-parity.md` from a checklist into
+  something that fails a build. See
+  [`docs/fcaps-test-plan.md`](docs/fcaps-test-plan.md).
 * **Security, testing, drift and coverage-gap docs**, four ADRs, and rewritten
   vendor-question lists.
 
@@ -128,6 +183,7 @@ docs/
   vendor-questions/    rewritten lists for Actelis and Nokia
   security-posture.md  SNMPv3, credential handling, lab checklist
   testing-strategy.md  the three test layers + lab checklist
+  fcaps-test-plan.md   the FCAPS acceptance suite, pillar by pillar
   firmware-mib-drift.md
   fcaps-parity.md
   lab-results/         raw captures from the 2026-09-18 validation runs
@@ -149,16 +205,19 @@ src/actelis_mediation/
   rowedit/             VTSSRowEditorState protocol + 63 generated specs
   traps/               snmptrapd decoding
   store/               SQLite persistence
-tests/                 54 tests: unit, MIB conformance, regression
+tests/                 47 unit / conformance / regression tests
+  fcaps/               63 FCAPS acceptance tests, one module per pillar
 ```
 
 ## Getting started
 
 ```bash
 pip install -e ".[dev]"
-make test          # 54 tests, incl. conformance against the vendor MIBs
+make test          # 110 tests, incl. conformance against the vendor MIBs
+make fcaps         # the FCAPS acceptance suite, offline
 make verify        # every OID constant vs the MIBs
 make lint
+make diagrams      # check every mermaid block still renders
 
 cp etc/devices.yaml.example etc/devices.yaml   # edit; credentials via env
 export LAB_SWITCH_RO=... LAB_SWITCH_RW=...
@@ -196,3 +255,4 @@ make mapping    # alarm/PM mapping tables
 
 Python 3.11+. `net-snmp` CLI tools on `PATH` for live polling (not needed for
 the test suite — everything is faked). `py7zr` for MIB conformance tests.
+`@mermaid-js/mermaid-cli` only if you want to re-validate the diagrams.

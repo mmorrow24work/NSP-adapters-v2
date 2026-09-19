@@ -15,6 +15,8 @@ jobs:
         run: python -m ruff check src tools tests
       - name: Tests (includes MIB conformance against the vendor archives)
         run: python -m pytest tests/ -v
+      - name: FCAPS acceptance suite
+        run: python -m pytest tests/fcaps/ -v
       - name: Generated artefacts are up to date
         run: |
           python3 tools/gen_row_editor_specs.py > /tmp/specs.py
@@ -23,3 +25,14 @@ jobs:
           python3 tools/build_attribute_schema.py
           git diff --exit-code data/attribute-schema/ \
             || { echo "::error::attribute schema is stale -- run 'make schema'"; exit 1; }
+
+  diagrams:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: npm install -g @mermaid-js/mermaid-cli
+      - name: Every mermaid block must render
+        run: python3 tools/check_mermaid.py

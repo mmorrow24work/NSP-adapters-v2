@@ -57,7 +57,27 @@ def main() -> int:
         entry = by_name.get(table_name[:-5] + "Entry") if table_name.endswith("Table") else None
         if entry is None:
             entry = by_name.get(stem + "Entry")
+
+        if table is None or entry is None:
+            # Vendor naming is not perfectly regular: the DHCP excluded-IP
+            # editor is `...ExcludedIpTableRowEditor` while its table is
+            # `...ExcludedTable`. Fall back to structure -- the row-editor
+            # group is the sibling immediately after its table, so the table
+            # is at the preceding sub-identifier.
+            head, _, last = action[0]["oid"].rpartition(".")      # strip Action subid
+            group_oid = head
+            parent, _, idx = group_oid.rpartition(".")
+            if idx.isdigit() and int(idx) > 1:
+                sibling = f"{parent}.{int(idx) - 1}"
+                by_oid = {v["oid"]: v for v in defs.values() if v["oid"]}
+                cand = by_oid.get(sibling)
+                if cand is not None and cand["syntax"].startswith("SEQUENCE OF"):
+                    table = cand
+                    entry = by_oid.get(f"{sibling}.1")
+                    table_name = cand["name"]
+
         if table is None or entry is None or not table["oid"]:
+            print(f"SKIP {stem}: no table/entry found", file=sys.stderr)
             continue
 
         # per-row Action column: the column of `entry` whose syntax is the
@@ -71,10 +91,16 @@ def main() -> int:
         if row_action is None:
             continue
 
+        # Index component names are shortened against the table's own prefix
+        # so they read as fields (`name`, `sourceIP`) rather than as the full
+        # module-qualified object names.
+        base = table_name[:-5] if table_name.endswith("Table") else stem
         idx_names, idx_kinds = [], []
         for comp in [c.strip() for c in entry["index"].split(",") if c.strip()]:
             col = by_name.get(comp)
-            idx_names.append(comp.split(stem)[-1] or comp)
+            short = comp[len(base):] if comp.startswith(base) else comp
+            short = (short[0].lower() + short[1:]) if short else comp
+            idx_names.append(short)
             idx_kinds.append(index_kind(col["syntax"] if col else "", tcs))
 
         field_lines = []

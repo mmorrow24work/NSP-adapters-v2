@@ -53,6 +53,45 @@ Those map onto the three genuine weaknesses of the direct-SNMP design:
 An ADR that does not mention the alternative it rejected will not survive
 review by anyone who opens that archive.
 
+## The two paths
+
+```mermaid
+flowchart TB
+    COMM["NSP Communicator"]
+
+    subgraph DIRECT["Direct SNMP — decided, primary"]
+        D1["Per-device agent<br/>1.3.6.1.4.1.5468"]
+        D2["Config push<br/>lab-proven incl. row creation"]
+        D3["PM interval bins<br/>on-device history"]
+        D4["Inventory<br/>lab-confirmed"]
+        D5["Alarms<br/>no stable correlation ID"]
+        D6["Topology<br/>no confirmed source"]
+    end
+
+    subgraph VIAEMS["EMS northbound — worth evaluating"]
+        E1["Stable alarmID<br/>across the estate"]
+        E2["alarmAdded / Cleared / Modified<br/>lifecycle notifications"]
+        E3["Closed severity enum<br/>warning · minor · major · critical"]
+        E4["topologyTable<br/>deviceParent, device role"]
+        E5["Read-only<br/>no config, no PM"]
+        E6["Requires the EMS<br/>to be deployed"]
+    end
+
+    COMM ==> DIRECT
+    COMM -.-> VIAEMS
+
+    classDef good fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    classDef weak fill:#fee2e2,stroke:#dc2626,color:#0f172a
+    classDef cost fill:#f1f5f9,stroke:#94a3b8,color:#334155
+    class D1,D2,D3,D4,E1,E2,E3,E4 good
+    class D5,D6 weak
+    class E5,E6 cost
+```
+
+The green boxes on each side are what that path does well. The direct path's
+two weaknesses are precisely what the EMS interface covers — which is why the
+recommendation is a hybrid rather than a choice.
+
 ## Decision
 
 **Keep direct SNMP as the primary path** — for configuration, performance and

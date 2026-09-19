@@ -48,7 +48,7 @@ class _Backend(NetSnmpBackend):
     def __init__(self, output):
         super().__init__()
         self._output = output
-    def _run(self, args, *, timeout_s, env=None):
+    def _run(self, args, *, timeout_s, env=None, secrets=None):
         from actelis_mediation.snmp.netsnmp import (_AUTH_RE, _BADVAL_RE, _TIMEOUT_RE)
         if _TIMEOUT_RE.search(self._output):
             raise SnmpTimeout(self._output)

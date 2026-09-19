@@ -9,6 +9,15 @@ install:  ## install the package and dev dependencies
 test:  ## run the full test suite (includes MIB conformance)
 	python3 -m pytest tests/ -v
 
+fcaps:  ## run the FCAPS acceptance suite (offline)
+	python3 -m pytest tests/fcaps/ -v
+
+fcaps-hw:  ## run FCAPS against a real device: make fcaps-hw DEVICE=lab-switch-01
+	python3 -m pytest tests/fcaps/ -v --device $(DEVICE) --device-config etc/devices.yaml
+
+diagrams:  ## render every mermaid block to check it compiles
+	python3 tools/check_mermaid.py
+
 lint:  ## ruff
 	python3 -m ruff check src tools tests
 

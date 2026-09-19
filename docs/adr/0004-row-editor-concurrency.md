@@ -9,15 +9,26 @@
 (`docs/lab-results/ml540m-row-editor-20260918.txt`). Its state machine,
 verbatim from the textual convention:
 
+```mermaid
+stateDiagram-v2
+    direction LR
+    [*] --> IDLE
+    IDLE --> RESERVED : write MANAGER-ID<br/>256 .. 4294967295
+    RESERVED --> RESERVED : SET row-editor field values
+    RESERVED --> IDLE : write COMMIT = 2<br/>row is created
+    RESERVED --> IDLE : write CLEAR = 1<br/>staged values discarded
+
+    note right of RESERVED
+        No timeout exists.
+        RESERVED is left ONLY by an
+        explicit CLEAR or COMMIT.
+        A manager that dies here locks
+        the table for every other manager.
+    end note
 ```
-        +--------------+                 +------------------+
-        |              |<----------------|                  |
-        |              |   CLEAR         |                  |
-        |     IDLE     |<----------------|     RESERVED     |
-        |              |   COMMIT        |                  |
-        |              |---------------->|                  |
-        +--------------+   MANAGER-ID    +------------------+
-```
+
+Reading the state back returns `0` when idle, or the holding manager's ID —
+never `1` or `2`. Verbatim from the textual convention:
 
 Two properties follow that the original analysis did not draw out:
 

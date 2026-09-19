@@ -1,5 +1,9 @@
 # FCAPS parity with the Actelis EMS
 
+> This analysis is now executable: each pillar below has a matching module in
+> `tests/fcaps/`, 63 assertions in total. See
+> [`fcaps-test-plan.md`](fcaps-test-plan.md).
+
 Revised from `fcaps-parity-with-ems.md`. The Fault, Configuration,
 Performance and Accounting analysis was sound and is kept; Security is
 rewritten because its central premise was wrong, and each pillar now
@@ -64,6 +68,35 @@ holds up.
   one completed interval, overwritten by the next. Different collection
   strategy from the 96-bin tables, and less forgiving of a missed poll.
 * The switch has Y.1731 LM/DM binned measurements.
+
+The two on-device history models behave very differently under a missed poll:
+
+```mermaid
+flowchart LR
+    subgraph HDSL["HDSL2-SHDSL line counters — forgiving"]
+        H1["96 x 15-min bins = 24h"]
+        H2["7 x 1-day bins = 1 week"]
+        H3["Miss a poll?<br/>Bins are still there.<br/>Catch up later."]
+        H1 --> H3
+        H2 --> H3
+    end
+
+    subgraph SERVMON["ACTELIS-SERV-MON EVC counters — unforgiving"]
+        S1["Curr = interval in progress"]
+        S2["Prev = ONE completed interval"]
+        S3["Miss a poll?<br/>The completed interval is<br/>overwritten and gone."]
+        S1 --> S3
+        S2 --> S3
+    end
+
+    classDef ok fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    classDef risk fill:#fee2e2,stroke:#dc2626,color:#0f172a
+    class H1,H2,H3 ok
+    class S1,S2,S3 risk
+```
+
+That difference drives the polling cadence, and it is asserted as a test —
+see `tests/fcaps/test_performance.py::test_pm_interval_beats_every_rollover_window`.
 
 Two additions:
 

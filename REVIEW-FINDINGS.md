@@ -1,6 +1,8 @@
 # Independent Review — NSP-adapters
 
 **Reviewed:** `github.com/mmorrow24work/NSP-adapters` @ `1d71e57` (2026-09-19)
+**Findings:** 22 — 20 from the review pass, 2 more surfaced by writing the
+FCAPS acceptance suite (F-21, F-22)
 **Method:** every claim checked against primary sources — the vendor MIB
 archives parsed with an independently-written SMIv2 extractor
 (`tools/mibscan.py`, deliberately not `smidump`), the raw lab captures in
@@ -53,6 +55,27 @@ That is correct only for single-component indices. Verified against the MIBs:
 | `ml540mPerfMonitorStatusStatisticsLmEntry` | `LmIntervalId, LmEntryId` | **2** |
 | `hdsl2Shdsl15MinIntervalEntry` | `ifIndex, hdsl2ShdslInvIndex, hdsl2ShdslEndpointSide, hdsl2ShdslEndpointWirePair, hdsl2Shdsl15MinIntervalNumber` | **5** |
 
+```mermaid
+flowchart TB
+    OID["Walked OID<br/>1.3.6.1.2.1.10.48.1.6.1.2 . 101.1.2.1.42"]
+
+    OID --> ORIG["Original<br/>oid.rsplit('.', 1)[-1]"]
+    OID --> FIXED["Fixed<br/>decode against the INDEX clause"]
+
+    ORIG --> O1["index = 42"]
+    O1 --> O2["port? unknown<br/>endpoint side? unknown<br/>wire pair? unknown<br/>rows collide on bin number"]
+
+    FIXED --> F1["ifIndex = 101<br/>invIndex = 1<br/>endpointSide = 2<br/>wirePair = 1<br/>intervalNumber = 42"]
+    F1 --> F2["Row is uniquely identified<br/>and attributable"]
+
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+    classDef good fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    classDef neutral fill:#f1f5f9,stroke:#94a3b8,color:#0f172a
+    class ORIG,O1,O2 bad
+    class FIXED,F1,F2 good
+    class OID neutral
+```
+
 Two consequences, both silent:
 
 * **The DM unit bug.** `poll_pm_switch_dm` keys `units_by_index` on the last
@@ -104,6 +127,17 @@ Worse, `currentAlarmState` (`VTSSAlarmState ::= INTEGER { alm-Set(1),
 alm-Cleared(2) }`) *is* read but only concatenated into a text field, so a row
 the device has already cleared is still recorded at its alarm severity. The
 trap path handled this correctly; the poll path did not — the two disagreed.
+
+```mermaid
+stateDiagram-v2
+    direction LR
+    [*] --> Absent
+    Absent --> Standing : seen in poll / trap<br/>emit RAISED
+    Standing --> Standing : still present<br/>emit nothing
+    Standing --> Standing : severity changed<br/>emit CHANGED
+    Standing --> Absent : alm-Cleared, clear trap,<br/>or gone from a full poll<br/>emit CLEARED
+    Standing --> Standing : Communicator restart<br/>state reloaded, no re-raise
+```
 
 **Fixed.** `model/alarms.py` keeps standing alarms keyed on a stable
 identity (alarm type + port for the switch, TL1 AID + name for the modem —
@@ -366,6 +400,46 @@ sections against what is actually demonstrable.
 
 ---
 
+## Found later, while writing the FCAPS acceptance suite
+
+Two defects that the original suite could not have caught, and neither could
+my first review pass — both surfaced only when the code was asserted against
+what a *fault manager* needs rather than against its own intentions.
+
+### F-21 · C2 · `nsp_severity` sometimes holds prose, and the poller called `Severity()` on it
+
+12 of the 50 alarm-mapping rows carry a cross-reference in the
+`nsp_severity` column instead of a severity — e.g.
+`(see alarmSeverity CR/MJ/MN/NA mapping above)` on alarm-*name* rows, whose
+severity comes from a different column of the same device alarm. As an
+authoring convention that is defensible; the problem is that both the poll
+and trap paths did `Severity(row.nsp_severity)`, which raises `ValueError` on
+those rows and takes down the whole collection cycle.
+
+It has not bitten yet only because the DSL alarm path has never run against
+hardware, and the switch rows it does touch happen to hold real severities.
+
+**Fixed.** `model.alarms.parse_severity()` handles the cross-reference
+convention, the empty case and any unknown value, degrading to
+`Indeterminate` with a warning. No raw `Severity()` constructor call remains
+on mapping data. `tests/fcaps/test_fault.py::test_severity_parsing_never_raises_on_any_mapping_row`
+walks every row in the CSV.
+
+### F-22 · C3 · The community string survived on a chained exception
+
+After redacting the command line and tool output, one path still leaked:
+`subprocess.TimeoutExpired` stringifies its own argv, which contains `-c
+<community>`. `raise SnmpTimeout(...) from None` suppresses *display* of the
+context but leaves the object reachable on `__context__`, so anything that
+logs or serialises the exception chain gets the credential.
+
+**Fixed.** The `TimeoutExpired` instance is scrubbed (`cmd`, `output`,
+`stderr`) before it becomes the context. Asserted by
+`tests/fcaps/test_security.py::test_community_never_reaches_an_exception_message`,
+which drives the real `_run` path rather than a stub.
+
+---
+
 ## What I kept, unchanged, because it is right
 
 * **The row-editor protocol analysis.** Verified verbatim against the
@@ -418,6 +492,8 @@ sections against what is actually demonstrable.
 | F-18 | C4 | Documented MIB counts drift from reality | Fixed; verified in CI |
 | F-19 | C4 | `lookup()` still silently resolves collisions | Fixed; warns |
 | F-20 | C4 | Status claims stronger than evidence | Rewritten |
+| F-21 | C2 | `Severity()` called on prose cross-reference rows | Fixed; `parse_severity` + test |
+| F-22 | C3 | Community leaked via chained `TimeoutExpired` | Fixed; exception scrubbed + test |
 
 **Not fixed, deliberately:** the switch `Lm*LossRate` scale (genuinely
 unstated in any MIB — stays a vendor question, and the assumed scale is never

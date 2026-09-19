@@ -14,6 +14,40 @@ code do what the code intends" cannot catch a wrong intention.
 
 ## The three layers now
 
+```mermaid
+flowchart TB
+    subgraph L1["Layer 1 — unit, against a fake device"]
+        A1["FakeBackend in-memory device image"]
+        A2["Regression tests encoding past failures"]
+        A3["No network · no net-snmp · runs in CI"]
+    end
+
+    subgraph L2["Layer 2 — conformance, against the vendor MIBs"]
+        B1["Extract the .7z archives"]
+        B2["Parse with tools/mibscan.py"]
+        B3["Every OID constant · every INDEX spec<br/>· every generated row-editor field"]
+        B4["A MIB revision that moves an object<br/>fails the build"]
+    end
+
+    subgraph L3["Layer 3 — hardware, against a real device"]
+        C1["pytest -m hardware --device lab-switch-01"]
+        C2["FCAPS acceptance assertions"]
+        C3["NOT YET RUN — the real gap"]
+    end
+
+    L1 --> L2 --> L3
+
+    classDef done fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    classDef gap fill:#fee2e2,stroke:#dc2626,color:#0f172a
+    class A1,A2,A3,B1,B2,B3,B4,C1,C2 done
+    class C3 gap
+```
+
+Layer 1 catches "does the code do what it intends". Layer 2 catches "is the
+intention right" — the layer whose absence let three defects pass a green
+suite. Layer 3 catches "does the device actually behave that way", and is
+still the honest gap.
+
 ### 1. Unit tests against a fake device — 54 tests, no network, no net-snmp
 
 `snmp/backend.py` provides `FakeBackend`, an in-memory device image. Tests
@@ -47,6 +81,25 @@ Unchanged from the original's honest assessment, and worth restating plainly:
 **nothing in the Communicator has ever run against a device.** The bash
 validation scripts have; the Python has not. Until that happens, "the OIDs
 are right" is proven and "the collection works" is not.
+
+## The FCAPS acceptance suite
+
+Layered on top of the three levels above, `tests/fcaps/` expresses the FCAPS
+parity analysis as 63 executable acceptance criteria — one module per pillar,
+each assertion phrased as "what must be true for NSP to be able to use this"
+rather than as a unit test. 56 run offline; 7 are hardware-gated behind
+`--device`. Full breakdown in [`fcaps-test-plan.md`](fcaps-test-plan.md).
+
+Writing it found two defects that the existing suite could not have caught,
+which is the argument for acceptance tests in a sentence:
+
+* 12 of 50 alarm-mapping rows carry a prose cross-reference in the
+  `nsp_severity` column rather than a severity; the pollers called
+  `Severity(row.nsp_severity)` on it, which raises `ValueError` and would have
+  taken down a polling cycle on a live modem.
+* `subprocess.TimeoutExpired` stringifies its own argv, so the community
+  string survived on the chained exception's `__context__` even after the
+  message itself was redacted.
 
 ## Lab checklist
 
