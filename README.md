@@ -7,8 +7,10 @@ per device type, managed by **direct SNMP** to each device.
 This is a reworked version of
 [`mmorrow24work/NSP-adapters`](https://github.com/mmorrow24work/NSP-adapters)
 following an independent review. **Start with [`REVIEW-FINDINGS.md`](REVIEW-FINDINGS.md)**
-— 20 findings, severity-rated, each with what was done about it.
-[`ROADMAP.md`](ROADMAP.md) has the revised plan.
+— 22 findings, severity-rated, each with what was done about it.
+[`ROADMAP.md`](ROADMAP.md) has the revised plan, and
+[`docs/glossary.md`](docs/glossary.md) explains every abbreviation used
+across the repo — ADR, MDM, FCAPS, VTSS, MEP, FLR and the rest.
 
 ---
 
@@ -177,6 +179,7 @@ drift-corrected scheduler.
 REVIEW-FINDINGS.md     20 findings, severity-rated, with resolutions
 ROADMAP.md             revised plan + 6 new workstreams
 docs/
+  glossary.md          every abbreviation used in the repo
   adr/                 architecture decisions (direct-SNMP, MDM vs MDC,
                        device-type scoping, row-editor concurrency)
   mib-analysis/        coverage gaps, resolved units, servmon recovery
